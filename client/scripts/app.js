@@ -15,13 +15,34 @@ var App = {
     App.startSpinner();
     App.fetch(App.stopSpinner);
 
+    // attach click handler on refresh button to invoke Parse.readAll onclick
+
+    // $('#refresh').on('click', () => {
+    //   Parse.readAll(() => {
+    //     console.log('GETted successfully')
+    //   });
+    // }, () => {
+    //   console.log('clicked');
+    // });
+
+    // $('#refresh').click(() => {
+    //   App.fetch(App.stopSpinner);
+    // });
+
+    $('#refresh').click(() => {
+      Parse.readAll((data) => {
+        MessagesView.render(data, true);
+      });
+    });
+
+    
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
       // examine the response from the server request:
       console.log(data);
-      MessagesView.render(data);
+      MessagesView.render(data, false);
       callback();
     });
   },
