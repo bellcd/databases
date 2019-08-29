@@ -16,26 +16,13 @@ var App = {
     App.fetch(App.stopSpinner);
 
     // attach click handler on refresh button to invoke Parse.readAll onclick
-
-    // $('#refresh').on('click', () => {
-    //   Parse.readAll(() => {
-    //     console.log('GETted successfully')
-    //   });
-    // }, () => {
-    //   console.log('clicked');
-    // });
-
-    // $('#refresh').click(() => {
-    //   App.fetch(App.stopSpinner);
-    // });
-
     $('#refresh').click(() => {
       Parse.readAll((data) => {
         MessagesView.render(data, true);
       });
     });
 
-    
+
   },
 
   fetch: function(callback = ()=>{}) {
