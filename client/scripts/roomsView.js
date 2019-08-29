@@ -7,7 +7,7 @@ var RoomsView = {
 
   initialize: function() {
     $('#rooms button').click(() => {
-      this.addRoom.call(this);
+      Rooms.add.call(this);
     });
 
     this.$select.on('change', () => {
@@ -19,12 +19,6 @@ var RoomsView = {
         MessagesView.showOrHideMessage(this, messageRoom, selectedRoom);
       });
     });
-  },
-
-  addRoom: function() {
-    let room = $('#roomname-input-field')[0].value;
-    this.render(room);
-    $('#roomname-input-field').eq(0).html('');
   },
 
   render: function(roomName) {
