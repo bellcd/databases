@@ -31,6 +31,17 @@ var MessagesView = {
 
       // append escaped user input
       let $messageEquals = $(messageEquals); // TODO: adds show or hide functionality
+
+      // attach click handler on for socializing feature
+      $messageEquals.click(function(e) {
+        debugger;
+        let element = $(e.target);
+        if (element.hasClass('username')) {
+          // get the username in question
+          // add / remove it to the username list
+          Friends.updateFriendsList(element.text());
+        }
+      });
       MessagesView.showOrHideMessage($messageEquals, data.results[i].roomname, $('#rooms select').val())
       $('#chats').append($messageEquals);
     }
@@ -45,3 +56,9 @@ var MessagesView = {
   }
 
 };
+
+
+
+
+
+

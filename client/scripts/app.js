@@ -22,7 +22,6 @@ var App = {
       });
     });
 
-
   },
 
   fetch: function(callback = ()=>{}) {
