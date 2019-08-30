@@ -18,7 +18,7 @@ var App = {
     // attach click handler on refresh button to invoke Parse.readAll onclick
     $('#refresh').click(() => {
       Parse.readAll((data) => {
-        MessagesView.render(data, true);
+        MessagesView.render(data);
       });
     });
 
@@ -28,7 +28,7 @@ var App = {
     Parse.readAll((data) => {
       // examine the response from the server request:
       console.log(data);
-      MessagesView.render(data, false);
+      MessagesView.render(data);
       callback();
     });
   },

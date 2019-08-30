@@ -1,7 +1,7 @@
 var Friends = {
   friendsList: [],
 
-  updateFriendsList: function(friendName) {
+  toggleStatus: function(friendName) {
     // search friendsList for friendName
     let index = this.friendsList.indexOf(friendName);
     if (index !== -1) {
@@ -30,6 +30,5 @@ var Friends = {
     this.friendsList.forEach((friendName) => {
       $('#friends ul').append(`<li>${friendName}</li>`);
     });
-
   }
 };

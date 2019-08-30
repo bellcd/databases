@@ -14,9 +14,9 @@ var RoomsView = {
       let selectedRoom = $('#rooms select').val();
       let $allMessages = $('#chats');
 
-      $allMessages.children().each(function() {
-        let messageRoom = this.children[2].innerHTML;
-        MessagesView.showOrHideMessage(this, messageRoom, selectedRoom);
+    $allMessages.children().each(function() {
+      let messageRoom = this.children[2].innerHTML;
+      MessagesView.showOrHideMessage(this, messageRoom, selectedRoom);
       });
     });
   },

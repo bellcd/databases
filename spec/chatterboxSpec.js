@@ -89,7 +89,7 @@ describe('chatterbox', function() {
       sinon.spy(Friends, 'toggleStatus');
 
       App.initialize();
-      MessagesView.renderMessage({
+      MessagesView.render({
         username: 'Mel Brooks',
         text: 'I didn\'t get a harumph outa that guy.!',
         roomname: 'lobby'

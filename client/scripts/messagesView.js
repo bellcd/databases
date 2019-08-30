@@ -6,7 +6,7 @@ var MessagesView = {
 
   },
 
-  render: function(data, breakpointBoolean) {
+  render: function(data) {
     // TODO: matches the format returned by the server for when we're testing a single object message
     if (!data.results) {
       data = {
@@ -34,12 +34,11 @@ var MessagesView = {
 
       // attach click handler on for socializing feature
       $messageEquals.click(function(e) {
-        debugger;
         let element = $(e.target);
         if (element.hasClass('username')) {
           // get the username in question
           // add / remove it to the username list
-          Friends.updateFriendsList(element.text());
+          Friends.toggleStatus(element.text());
         }
       });
       MessagesView.showOrHideMessage($messageEquals, data.results[i].roomname, $('#rooms select').val())
