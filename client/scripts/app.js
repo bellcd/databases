@@ -22,6 +22,13 @@ var App = {
       });
     });
 
+    // attach click handler for refresh button getting only certain messages from the server
+    $('#get-only-one-room').click(() => {
+      Parse.readOnlySomeRooms((data) => {
+        MessagesView.render(data);
+      }, null, RoomsView.currentlySelected);
+    });
+
   },
 
   fetch: function(callback = ()=>{}) {
