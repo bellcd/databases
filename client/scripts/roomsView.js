@@ -17,9 +17,9 @@ var RoomsView = {
 
       $('#get-only-one-room button span').text(this.currentlySelected);
 
-    $allMessages.children().each(function() {
-      let messageRoom = this.children[2].innerHTML;
-      MessagesView.showOrHideMessage(this, messageRoom, RoomsView.currentlySelected);
+      $allMessages.children().each(function() {
+        let messageRoom = this.children[2].innerHTML;
+        MessagesView.showOrHideMessage(this, messageRoom, RoomsView.currentlySelected);
       });
     });
   },
