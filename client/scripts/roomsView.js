@@ -3,7 +3,7 @@ var RoomsView = {
 
   $button: $('#rooms button'),
   $select: $('#rooms select'),
-  roomList: ['all'],
+  roomList: ['All'],
   currentlySelected: '',
 
   initialize: function() {
