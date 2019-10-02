@@ -7,13 +7,13 @@ USE chat;
 
 CREATE TABLE rooms (
   ID int,
-  name varchar(255),
+  roomname varchar(255),
   PRIMARY KEY (ID)
 );
 
 CREATE TABLE users (
   ID int,
-  name varchar(255),
+  username varchar(255),
   PRIMARY KEY (ID)
 );
 
