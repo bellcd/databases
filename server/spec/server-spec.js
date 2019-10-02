@@ -21,8 +21,20 @@ describe('Persistent Node Chat Server', function() {
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query('truncate ' + tablename1, done);
+    // dbConnection.query('truncate ' + tablename1, done);
 
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY id_rooms`, done);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY id_users`, done);
+
+    // truncate messages, rooms, and users tables
+    dbConnection.query(`TRUNCATE TABLE ${tablename1}`, done);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`, done);
+    dbConnection.query(`TRUNCATE TABLE ${tablename3}`, done);
+
+    // adds the foreign key constraints to the messages table
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, done);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD FOREIGN KEY (id_users) REFERENCES users(id)`, done);
   });
 
   afterEach(function() {

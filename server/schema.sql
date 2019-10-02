@@ -4,7 +4,6 @@ CREATE DATABASE chat;
 
 USE chat;
 
-
 CREATE TABLE rooms (
   ID int,
   roomname varchar(255),
