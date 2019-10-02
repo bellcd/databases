@@ -1,13 +1,32 @@
+DROP DATABASE chat;
+
 CREATE DATABASE chat;
 
 USE chat;
 
-CREATE TABLE messages (
-  /* Describe your table here.*/
+
+CREATE TABLE rooms (
+  ID int,
+  name varchar(255),
+  PRIMARY KEY (ID)
 );
 
-/* Create other tables and define schemas for them here! */
+CREATE TABLE users (
+  ID int,
+  name varchar(255),
+  PRIMARY KEY (ID)
+);
 
+CREATE TABLE messages (
+  ID int,
+  text varchar(255),
+  id_users int,
+  id_rooms int,
+  PRIMARY KEY (ID),
+  FOREIGN KEY (id_rooms) REFERENCES rooms(ID),
+  FOREIGN KEY (id_users) REFERENCES users(ID)
+);
+/* Create other tables and define schemas for them here! */
 
 
 
