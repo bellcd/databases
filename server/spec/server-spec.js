@@ -21,8 +21,21 @@ describe('Persistent Node Chat Server', function() {
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query('truncate ' + tablename1, done);
 
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+
+    // truncate messages, rooms, and users tables
+    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+
+    // adds the foreign key constraints to the messages table
+    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
   });
 
   afterEach(function() {
