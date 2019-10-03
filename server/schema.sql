@@ -1,8 +1,7 @@
+-- added if / if not exist logic
 CREATE DATABASE IF NOT EXISTS chat;
-
 USE chat;
-
-DROP TABLE IF EXISTS messages, rooms, users;
+DROP TABLE IF EXISTS messages, users, rooms;
 
 CREATE TABLE rooms (
   ID int AUTO_INCREMENT, -- Auto increments ID fields
