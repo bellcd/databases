@@ -15,26 +15,33 @@ describe('Persistent Node Chat Server', function() {
     });
     dbConnection.connect();
 
-    var tablename1 = "messages"; // TODO: fill this out
+    var tablename1 = "messages";
     var tablename2 = "rooms";
     var tablename3 = "users";
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
     // dbConnection.query('truncate ' + tablename1, done);
+    // dbConnection.query(`SHOW CREATE TABLE ${tablename1}`, (err, results, fields) => {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   console.log('results: ', results);
+    //   // console.log('fields: ', fields);
+    // });
 
     // drop the foreign key constraints from the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY id_rooms`, done);
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY id_users`, done);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
 
     // truncate messages, rooms, and users tables
-    dbConnection.query(`TRUNCATE TABLE ${tablename1}`, done);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`, done);
-    dbConnection.query(`TRUNCATE TABLE ${tablename3}`, done);
+    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
 
     // adds the foreign key constraints to the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, done);
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
   });
 
   afterEach(function() {
