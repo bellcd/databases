@@ -13,6 +13,7 @@
     "start": "nodemon ./server/app.js",
     "start:es6": "babel-node ./server/app.js",
     "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
+    "test-client": "open ./SpecRunner.html",
     "test:es6": "mocha --compilers js:babel-register server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "lint": "eslint ./"
   },
@@ -23,7 +24,9 @@
     "mysql": "^2.17.1",
     "nodemon": "^1.19.3",
     "request": "^2.88.0",
-    "sequelize": "^3.21.0"
+    "sequelize": "^3.21.0",
+    "underscore": "^1.9.1",
+    "jquery": "^3.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
@@ -31,7 +34,8 @@
     "babel-register": "^6.7.2",
     "chai": "^3.5.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "sinon": "^6.3.4"
   },
   "babel": {
     "presets": [
