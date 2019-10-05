@@ -3,9 +3,10 @@ var Parse = {
   // server: `http://parse.${window.CAMPUS}.hackreactor.com/chatterbox/classes/messages`,
   server: `http://127.0.0.1:3000/classes/messages`,
 
-  create: function(message, successCB, errorCB = null) {
+  create: function(message, endpoint, successCB, errorCB = null) {
 
     $.ajax({
+      // url: Parse.server,
       url: Parse.server,
       type: 'POST',
       data: JSON.stringify(message),
