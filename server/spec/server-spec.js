@@ -80,6 +80,36 @@ describe('Persistent Node Chat Server', function() {
     });
   });
 
+  // it('Should create 1 new user record for a user POST', function(done) {
+  //   // query to get number of records in users table
+  //   var queryString = "select * from users";
+  //   dbConnection.query(queryString, function(err) {
+  //     if (err) { throw err; }
+  //     request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
+  //       var messageLog = JSON.parse(body);
+  //       var numberOfRecords = messageLog.length;
+
+  //       // Let's insert a message into the db
+  //       request({
+  //         method: 'POST',
+  //         uri: 'http://127.0.0.1:3000/classes/users',
+  //         json: { username: 'lastTest' }
+  //       }, function () {
+  //         dbConnection.query(queryString, function(err) {
+  //           if (err) { throw err; }
+
+  //           // query to check if numberOfRecords increased by 1
+  //           request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
+  //             var messageLog = JSON.parse(body);
+  //             expect(messageLog.length === numberOfRecords + 1)
+  //             done();
+  //           });
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+
   it('Should output all messages from the DB', function(done) {
 
     // Let's insert a message into the db
@@ -120,4 +150,24 @@ describe('Persistent Node Chat Server', function() {
       });
     });
   });
+
+  it('Should create 1 new user record for a user POST', function(done) {
+    request({
+      method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/users',
+      json: { username: 'lobby' }
+    }, function () {
+        var queryString = 'SELECT * FROM users';
+        var queryArgs = [];
+
+        dbConnection.query(queryString, queryArgs, function(err, results) {
+          // Should have one result:
+          expect(results.length).to.equal(1);
+
+          expect(results[0].username).to.equal('lobby');
+
+          done();
+        });
+      });
+  })
 });

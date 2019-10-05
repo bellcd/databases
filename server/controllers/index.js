@@ -31,7 +31,22 @@ module.exports = {
         if (err) { throw err; }
         res.sendStatus(200);
       });
+    }
+  },
 
+  rooms: {
+    // Ditto as above
+    get: function (req, res) {
+      models.rooms.get((err) => {
+        if (err) { throw err; }
+        res.sendStatus(200);
+      });
+    },
+    post: function (req, res) {
+      models.rooms.post(req.body, (err) => {
+        if (err) { throw err; }
+        res.sendStatus(200);
+      });
     }
   }
 };

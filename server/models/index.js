@@ -76,5 +76,26 @@ module.exports = {
         if (err) { throw err; }
       });
     }
+  },
+
+  rooms: {
+    // Ditto as above.
+    get: function () {
+      db.dbConnection.query(`SELECT roomname FROM rooms`, (err, results) => {
+        if (err) { throw err; }
+        callback(results);
+      });
+    },
+
+    post: function (room, callback) {
+      db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err, results, fields) => {
+        if (err) { throw err; }
+        callback();
+      });
+
+      db.dbConnection.query(`SELECT * FROM rooms`, (err, results, fields) => {
+        if (err) { throw err; }
+      });
+    }
   }
 };
