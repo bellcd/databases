@@ -4,6 +4,11 @@
 var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!
 var expect = require('chai').expect;
+var db = require('../db/index.js');
+
+// console.log('db: ', db);
+// console.log('db.dbConnection: ', db.dbConnection);
+
 
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
@@ -40,6 +45,18 @@ describe('Persistent Node Chat Server', function() {
 
   afterEach(function() {
     dbConnection.end();
+  });
+
+  it.only('Should authenticate', function(done) {
+    console.log('this console logs')
+    db.dbConnection
+    .authenticate()
+    .then(() => {
+      console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+      console.error('Unable to connect to the database:', err);
+    });
   });
 
   it('Should insert posted messages to the DB', function(done) {

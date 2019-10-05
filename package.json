@@ -27,7 +27,7 @@
     "mysql": "^2.17.1",
     "nodemon": "^1.19.3",
     "request": "^2.88.0",
-    "sequelize": "^3.21.0",
+    "sequelize": "^3.35.1",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
