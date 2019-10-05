@@ -7,7 +7,7 @@ module.exports = {
   messages: {
     get: function (callback) {
       // a function which produces all the messages
-      db.dbConnection.query(`SELECT messages.text, rooms.roomname, users.username
+      db.dbConnection.query(`SELECT messages.id, messages.text, rooms.roomname, users.username
       FROM messages
       INNER JOIN users ON messages.id_users = users.id
       INNER JOIN rooms ON messages.id_rooms = rooms.id`,
@@ -17,8 +17,6 @@ module.exports = {
       });
     },
     post: function (message, callback) {
-
-
       // // check if username exists,
       // db.dbConnection.queryAsync(`SELECT id FROM users WHERE users.username = '${message.username}'`)
       // .then((results) => {

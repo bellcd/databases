@@ -8,7 +8,6 @@ var MessagesView = {
   },
 
   render: function() {
-
     MessagesView.$chats.html('');
     Messages
       .items()
