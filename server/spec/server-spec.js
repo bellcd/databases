@@ -147,7 +147,7 @@ describe('Persistent Node Chat Server', function() {
   });
 
   describe('rooms table', function() {
-    it('Should add a rooms to the DB', function(done) {
+    it('Should add a room to the DB', function(done) {
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/rooms',
@@ -162,54 +162,54 @@ describe('Persistent Node Chat Server', function() {
       });
     });
 
-    xit(`Should only add a user to the DB if that user doesn't already exist`, function(done) {
-      // add a user to the DB
+    it(`Should only add a room to the DB if that room doesn't already exist`, function(done) {
+      // add a room to the DB
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/rooms',
-        json: { username: 'Christian' }
+        json: { roomname: 'Kitchen' }
       }, function() {
-        // attempt to add the same user to the DB
+        // attempt to add the same room to the DB
         request({
           method: 'POST',
           uri: 'http://127.0.0.1:3000/classes/rooms',
-          json: { username: 'Christian' }
+          json: { roomname: 'Kitchen' }
         }, function() {
-          // the users table in the database, filtering by username = 'Christian', should only return 1 record
-          dbConnection.query(`SELECT username FROM users where username = "Christian"`, (err, results) => {
+          // the rooms table in the database, filtering by roomname = 'Kitchen', should only return 1 record
+          dbConnection.query(`SELECT roomname FROM rooms where roomname = "Kitchen"`, (err, results) => {
             expect(results).to.have.lengthOf(1);
-            expect(results[0].username).to.equal('Christian');
+            expect(results[0].roomname).to.equal('Kitchen');
             done();
           });
         });
       });
     });
 
-    xit('Should get all users from the DB', function(done) {
+    it('Should get all rooms from the DB', function(done) {
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/rooms',
-        json: { username: 'Krusty' }
+        json: { roomname: 'Kitchen' }
       }, function() {
         request({
           method: 'POST',
           uri: 'http://127.0.0.1:3000/classes/rooms',
-          json: { username: 'Mozart' }
+          json: { roomname: 'closet' }
         }, function() {
           request({
             method: 'POST',
             uri: 'http://127.0.0.1:3000/classes/rooms',
-            json: { username: 'Aladdin' }
+            json: { roomname: 'bedroom' }
           }, function() {
             request({
               method: 'GET',
               uri: 'http://127.0.0.1:3000/classes/rooms',
             }, function (err, response, body) {
-              const names = [ 'Krusty', 'Mozart', 'Aladdin' ];
+              const rooms = [ 'Kitchen', 'closet', 'bedroom' ];
               body = JSON.parse(body);
-              usernames = body.map((user) => user.username);
-              usernames.forEach((username, i) => {
-                expect(username).to.equal(names[i]);
+              const roomnames = body.map((room) => room.roomname);
+              roomnames.forEach((roomname, i) => {
+                expect(roomname).to.equal(rooms[i]);
               });
               done();
             });
