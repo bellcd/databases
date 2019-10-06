@@ -1,58 +1,44 @@
 var db = require('../db/index.js');
 
 module.exports = {
+
   messages: {
     get: function (callback) {
-      db.messages.findAll({attributes: ['text']})
-        .then(messages => {
-          callback(null, messages);
-        })
-        .catch(err => {
-          callback(err, null);
-        })
+      // fetch all messages
+      // text, username, roomname, id
+      var queryStr = 'select messages.id, messages.text, messages.roomname, users.username \
+                      from messages left outer join users on (messages.userid = users.id) \
+                      order by messages.id desc';
+      db.query(queryStr, function(err, results) {
+        callback(err, results);
+      });
     },
-    post: function (message, callback) {
-      var userN;
-      var roomN;
-      db.dbConnection.query(`INSERT INTO users (username) VALUES ('${message.username}')`, (err, results, fields) => {
-        if (err) { throw err; }
-        db.dbConnection.query(`SELECT id FROM users WHERE users.username = '${message.username}'`, (err, results, fields) => {
-          if (err) { throw err; }
-          userN = results[0].id;
-          db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${message.roomname}')`, (err, results, fields) => {
-            if (err) { throw err; }
-            db.dbConnection.query(`SELECT id FROM rooms WHERE rooms.roomname = '${message.roomname}'`, (err, results, fields) => {
-              if (err) { throw err; }
-              roomN = results[0].id;
-              // a function which can be used to insert a message into the database
-              var placeholder = [userN, roomN];
-              db.dbConnection.query(`INSERT INTO messages (text, id_users, id_rooms) VALUES ("${message.text}", ?, ?)`, placeholder, (err, results, fields) => { // using double quotes around the message seems really fragile here ...
-                if (err) { throw err; }
-                callback();
-              });
-            });
-          });
-        });
+    post: function (params, callback) {
+      // create a message for a user id based on the given username
+      var queryStr = 'insert into messages(text, userid, roomname) \
+                      value (?, (select id from users where username = ? limit 1), ?)';
+      db.query(queryStr, params, function(err, results) {
+        callback(err, results);
       });
     }
   },
-
   users: {
-    // Ditto as above.
     get: function (callback) {
-      db.user.findAll({attributes: ['username']})
-        .then(users => {
-          callback(null, users);
-        })
-        .catch(err => {
-          callback(err, null);
-        });
+      // fetch all users
+      var queryStr = 'select * from users';
+      db.query(queryStr, function(err, results) {
+        callback(err, results);
+      });
     },
-
-    post: function (user, callback) {
-      db.users.create({username: user.username});
+    post: function (params, callback) {
+      // create a user
+      var queryStr = 'insert into users(username) values (?)';
+      db.query(queryStr, params, function(err, results) {
+        callback(err, results);
+      });
     }
-  },
+  }
+  };
 
   rooms: {
     // Ditto as above.

@@ -1,14 +1,15 @@
 var Sequelize = require('sequelize');
 
-var createConnection = () => {
-  return new Sequelize('chat', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql',
-    define: {
-      timestamps: false
-    }
-  });
-}
+
+var connection = mysql.createConnection({
+  user: 'root',
+  password: '',
+  database: 'chat'
+});
+
+connection.connect();
+
+module.exports = connection;
 
 var dbConnection = createConnection();
 

@@ -55,6 +55,7 @@ describe('Persistent Node Chat Server', function() {
     // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
     // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
     done();
+
   });
 
   afterEach(function() {
