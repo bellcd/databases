@@ -24,18 +24,12 @@ var App = {
     Parse.readAll((data) => {
       console.log('data: ', data);
 
-
       // Don't bother to update if we have no messages
       if (!data || !data.length) {
         console.log('here');
+        callback(); // not sure this is correct here ??
         return;
       }
-
-      //       // Don't bother to update if we have no messages
-      // if (!data || !data.length) {
-      //   console.log('here');
-      //   return;
-      // }
 
       Rooms.update(data, RoomsView.render);
       Messages.update(data, MessagesView.render);

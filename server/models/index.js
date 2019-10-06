@@ -1,37 +1,17 @@
-var db = require('../db');
-// var Promise = require('bluebird');
-// Promise.promisifyAll(db.dbConnection);
-// console.log(queryAsync);
+var db = require('../db/index.js');
 
 module.exports = {
   messages: {
     get: function (callback) {
-      // a function which produces all the messages
-      db.dbConnection.query(`SELECT messages.id, messages.text, rooms.roomname, users.username
-      FROM messages
-      INNER JOIN users ON messages.id_users = users.id
-      INNER JOIN rooms ON messages.id_rooms = rooms.id`,
-      (err, results) => {
-        if (err) { throw err; }
-        callback(null, results);
-      });
+      db.messages.findAll({attributes: ['text']})
+        .then(messages => {
+          callback(null, messages);
+        })
+        .catch(err => {
+          callback(err, null);
+        })
     },
     post: function (message, callback) {
-      // // check if username exists,
-      // db.dbConnection.queryAsync(`SELECT id FROM users WHERE users.username = '${message.username}'`)
-      // .then((results) => {
-      //   console.log('queryAsync', results);
-      //   if (!results.length) {
-      //     module.exports.users.post(message.username, () => {
-      //       // check if roomname exists,
-      //         // NO, add it
-      //     });
-      //   }
-      // })
-      // .catch((err) => {
-      //   throw err;
-      // })
-
       var userN;
       var roomN;
       db.dbConnection.query(`INSERT INTO users (username) VALUES ('${message.username}')`, (err, results, fields) => {
@@ -59,22 +39,18 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {
-      db.dbConnection.query(`SELECT username FROM users`, (err, results) => {
-        if (err) { throw err; }
-        callback(results);
-      });
+    get: function (callback) {
+      db.user.findAll({attributes: ['username']})
+        .then(users => {
+          callback(null, users);
+        })
+        .catch(err => {
+          callback(err, null);
+        });
     },
 
     post: function (user, callback) {
-      db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err, results, fields) => {
-        if (err) { throw err; }
-        callback();
-      });
-
-      db.dbConnection.query(`SELECT * FROM users`, (err, results, fields) => {
-        if (err) { throw err; }
-      });
+      db.users.create({username: user.username});
     }
   },
 

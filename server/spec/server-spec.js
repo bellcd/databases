@@ -1,61 +1,82 @@
 /* You'll need to have MySQL running and your Node server running
  * for these tests to pass. */
 
-var mysql = require('mysql');
-var request = require('request'); // You might need to npm install the request module!
+// var mysql = require('mysql');
+var request = require('request');
 var expect = require('chai').expect;
 var db = require('../db/index.js');
-
-// console.log('db: ', db);
-// console.log('db.dbConnection: ', db.dbConnection);
+var Sequelize = require('sequelize');
 
 
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
+  var users;
+  var messages;
+  var rooms;
 
   beforeEach(function(done) {
-    dbConnection = mysql.createConnection({
-      user: 'root',
-      database: 'chat'
+    dbConnection = db.createConnection();
+
+    users = dbConnection.define('users', {
+      username: Sequelize.STRING
     });
-    dbConnection.connect();
 
-    var tablename1 = "messages"; // TODO: fill this out
-    var tablename2 = "rooms";
-    var tablename3 = "users";
+    messages = dbConnection.define('messages', {
+      text: Sequelize.STRING,
+      sample: Sequelize.STRING
+    });
 
-    /* Empty the db table before each test so that multiple tests
-     * (or repeated runs of the tests) won't screw each other up: */
+    rooms = dbConnection.define('rooms', {
+      roomname: Sequelize.STRING
+    });
 
-    // drop the foreign key constraints from the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+    users.hasMany(messages);
+    dbConnection.sync();
 
-    // truncate messages, rooms, and users tables
-    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+    // var tablename1 = "messages"; // TODO: fill this out
+    // var tablename2 = "rooms";
+    // var tablename3 = "users";
 
-    // adds the foreign key constraints to the messages table
-    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
-    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+    // /* Empty the db table before each test so that multiple tests
+    //  * (or repeated runs of the tests) won't screw each other up: */
+
+    // // drop the foreign key constraints from the messages table
+    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+
+    // // truncate messages, rooms, and users tables
+    // dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    // dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    // dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+
+    // // adds the foreign key constraints to the messages table
+    // // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+    // // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+    done();
   });
 
   afterEach(function() {
-    dbConnection.end();
+    [users, rooms, messages].forEach((table) => {
+      table.destroy({truncate: true});
+    })
+
+    dbConnection.close();
   });
 
   it.only('Should authenticate', function(done) {
-    console.log('this console logs')
-    db.dbConnection
+    // console.log('inside should authenticate');
+    // console.log('dbConnection: ', dbConnection);
+    dbConnection
     .authenticate()
     .then(() => {
       console.log('Connection has been established successfully.');
+      done();
     })
     .catch(err => {
       console.error('Unable to connect to the database:', err);
+      done();
     });
   });
 
@@ -97,35 +118,40 @@ describe('Persistent Node Chat Server', function() {
     });
   });
 
-  // it('Should create 1 new user record for a user POST', function(done) {
-  //   // query to get number of records in users table
-  //   var queryString = "select * from users";
-  //   dbConnection.query(queryString, function(err) {
-  //     if (err) { throw err; }
-  //     request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
-  //       var messageLog = JSON.parse(body);
-  //       var numberOfRecords = messageLog.length;
+  it.only('Should add a user', function(done) {
+    users.create({username: 'Christian'})
+      .then((record) => {})
+      .then(() => {
+        users.findAll({ attributes: ['username']})
+        .then((records) => {
+          expect(records.length === 1);
+          expect(records[0].username === 'Christian');
+          // console.log('records.length: ', records.length);
+          // console.log('records: ', JSON.stringify(records, null, 4));
+          done();
+        })
+    });
+  });
 
-  //       // Let's insert a message into the db
-  //       request({
-  //         method: 'POST',
-  //         uri: 'http://127.0.0.1:3000/classes/users',
-  //         json: { username: 'lastTest' }
-  //       }, function () {
-  //         dbConnection.query(queryString, function(err) {
-  //           if (err) { throw err; }
+  it('Should insert POSTed user to the database', function(done) {
+    // Let's insert a message into the db
+    request({
+      method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/users',
+      json: { username: 'Santa' }
+    }, function () {
+      dbConnection.query(queryString, function(err) {
+        if (err) { throw err; }
 
-  //           // query to check if numberOfRecords increased by 1
-  //           request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
-  //             var messageLog = JSON.parse(body);
-  //             expect(messageLog.length === numberOfRecords + 1)
-  //             done();
-  //           });
-  //         });
-  //       });
-  //     });
-  //   });
-  // });
+        // query to check if numberOfRecords increased by 1
+        request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
+          var messageLog = JSON.parse(body);
+          expect(messageLog.length === numberOfRecords + 1)
+          done();
+        });
+      });
+    });
+  });
 
   it('Should output all messages from the DB', function(done) {
 
