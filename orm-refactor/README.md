@@ -5,7 +5,7 @@ This directory contains the solution for the ORM refactored version of chatterbo
         controllers/index.js
         db/index.js
 
-In order to run your server from this directly from this directory, you must first prepare it:
+In order to run your server directly from this directory, you must first prepare it:
 
         npm run prepare
 

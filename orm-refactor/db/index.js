@@ -1,5 +1,7 @@
 var Sequelize = require('sequelize');
-var db = new Sequelize('chat', 'root', '');
+var db = new Sequelize('chat', 'root', '', {
+  dialect: 'mysql'
+});
 
 // we define the models we need using js--we don't need a schema file!
 var User = db.define('User', {
