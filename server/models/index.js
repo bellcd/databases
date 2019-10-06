@@ -2,9 +2,11 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function () {
-      // a function which produces all the messages
-      // db.dbConnection.query('SELECT text FROM messages', () => {});
+    get: function (callback) {
+      db.dbConnection.query('SELECT text FROM messages', (err, messages) => {
+        if (err) { callback(err, null); }
+        callback(null, messages);
+      });
     },
     post: function (message, callback) {
       // console.log('inside models.messages.post, message.roomname: ', message.roomname);
@@ -43,11 +45,56 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {},
+    get: function (callback) {
+      db.dbConnection.query('SELECT username FROM users', (err, results) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
+    },
     post: function (user, callback) {
-      db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err) => {
-        if (err) { throw err; }
-        callback();
+      db.dbConnection.query(`SELECT username FROM users WHERE username = '${user.username}'`, (err, results) => {
+        if (err) {
+          callback(err, null);
+        } else if (results.length === 1) {
+          // that username already exists in the user table
+          callback(new Error('Username unavailable. Please choose another.'), null);
+        } else {
+          db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err) => {
+            if (err) { callback(err, null); }
+            callback();
+          });
+        }
+      });
+    }
+  },
+
+  rooms: {
+    // Ditto as above.
+    get: function (callback) {
+      db.dbConnection.query('SELECT roomname FROM rooms', (err, results) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
+    },
+    post: function (room, callback) {
+      db.dbConnection.query(`SELECT roomname FROM rooms WHERE roomname = '${room.roomname}'`, (err, results) => {
+        if (err) {
+          callback(err, null);
+        } else if (results.length === 1) {
+          // that roomname already exists in the room table
+          callback(new Error('Room already exists!'), null);
+        } else {
+          db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err) => {
+            if (err) { callback(err, null); }
+            callback();
+          });
+        }
       });
     }
   }

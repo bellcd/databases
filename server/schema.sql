@@ -1,10 +1,9 @@
--- added if / if not exist logic
 CREATE DATABASE IF NOT EXISTS chat;
 USE chat;
 DROP TABLE IF EXISTS messages, users, rooms;
 
 CREATE TABLE rooms (
-  ID int AUTO_INCREMENT, -- Auto increments ID fields
+  ID int AUTO_INCREMENT,
   roomname varchar(255),
   PRIMARY KEY (ID)
 );
@@ -22,7 +21,7 @@ CREATE TABLE messages (
   id_users int,
   id_rooms int,
   PRIMARY KEY (ID),
-  CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(ID), -- adds the foreign keys within constraints
+  CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(ID),
   CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(ID)
 );
 /* Create other tables and define schemas for them here! */
