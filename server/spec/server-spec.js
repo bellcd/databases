@@ -8,6 +8,35 @@ var expect = require('chai').expect;
 describe('Persistent Node Chat Server', function() {
   var dbConnection;
 
+  // TODO: change truncating tables logic to use this function, instead of repeating same logic in beforeEach / afterEach
+  // TODO: change one of beforeEach / afterEach to only run before the whole test suite, or after the whole test suite
+  function cleanTables(dbConnection) {
+    var tablename1 = "messages";
+    var tablename2 = "rooms";
+    var tablename3 = "users";
+
+    // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
+
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+
+    // truncate messages, rooms, and users tables
+    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+
+    // dbConnection.query('SELECT * FROM users', (err, results) => {
+    //   console.log('results: ', results);
+    // });
+
+    // adds the foreign key constraints to the messages table
+    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`);
+  }
+
   beforeEach(function(done) {
     dbConnection = mysql.createConnection({
       user: 'root',
@@ -30,15 +59,50 @@ describe('Persistent Node Chat Server', function() {
     dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
     dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
 
+    // dbConnection.query('SELECT * FROM users', (err, results) => {
+    //   console.log('results: ', results);
+    // });
+
     // adds the foreign key constraints to the messages table
     // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
     // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
     dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
     dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+
+    // cleanTables(dbConnection); // alternate approach
   });
 
-  afterEach(function() {
-    dbConnection.end();
+  afterEach(function(done) {
+
+    var tablename1 = "messages";
+    var tablename2 = "rooms";
+    var tablename3 = "users";
+
+    // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
+
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+
+    // truncate messages, rooms, and users tables
+    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+
+    // dbConnection.query('SELECT * FROM users', (err, results) => {
+    //   console.log('results: ', results);
+    // });
+
+    // adds the foreign key constraints to the messages table
+    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, () => {
+      dbConnection.end();
+      done();
+    });
+
+    // cleanTables(dbConnection); // alternate approach
   });
 
   describe('users table', function() {
