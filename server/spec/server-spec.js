@@ -188,40 +188,9 @@ describe('Persistent Node Chat Server', function() {
   });
 
   describe('messages table', function() {
-    xit('Should insert POSTed messages to the DB', function(done) {
-      // Post the user to the chat server.
-      request({
-        method: 'POST',
-        uri: 'http://127.0.0.1:3000/classes/users',
-        json: { username: 'Valjean' }
-      }, function() {
-        // Post a message to the node chat server:
-        request({
-          method: 'POST',
-          uri: 'http://127.0.0.1:3000/classes/messages',
-          json: {
-            username: 'Valjean',
-            text: 'In mercy\'s name, three days is all I need.',
-            roomname: 'Hello'
-          }
-        }, function() {
-          // Now if we look in the database, we should find the posted message there.
-          var queryString = 'SELECT * FROM messages';
-          var queryArgs = [];
-
-          dbConnection.query(queryString, queryArgs, function(err, results) {
-            if (err) { throw err; }
-            // Should have one result:
-            expect(results.length).to.equal(1);
-            expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
-            done();
-          });
-        });
-      });
-    });
 
     // TODO: should this be multiple tests?
-    it('Should insert POSTed messages to the DB, and create username & roomname if needed', function(done) {
+    it('Should insert messages to the DB, and create username & roomname values in respective tables if needed', function(done) {
       // post a message to the chat server, without having posted a user previously
       request({
         method: 'POST',
@@ -254,33 +223,44 @@ describe('Persistent Node Chat Server', function() {
       });
     });
 
-    // TODO: finish writing test
-    xit('Should GET messages from the DB', function(done) {
-      // POST the user to the chat server
+    it('Should output all messages from the DB', function(done) {
+      // Let's insert two messages into the db
       request({
         method: 'POST',
-        uri: 'http://127.0.0.1:3000/classes/users',
-        json: { username: 'Christian' }
+        uri: 'http://127.0.0.1:3000/classes/messages',
+        json: {
+          username: 'Valjean',
+          text: 'In mercy\'s name, three days is all I need.',
+          roomname: 'Les Mis'
+        }
       }, function() {
-        done();
-      });
-    });
-
-    xit('Should output all messages from the DB', function(done) {
-      // Let's insert a message into the db
-      var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id = users.id inner join rooms on messages.id_rooms = rooms.id;";
-      var queryArgs = [];
-
-      dbConnection.query(queryString, queryArgs, function(err) {
-        if (err) { throw err; }
-
-        // Now query the Node chat server and see if it returns
-        // the message we just inserted:
-        request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
-          // var messageLog = JSON.parse(body);
-          // expect(messageLog[0].text).to.equal('Men like you can never change!');
-          // expect(messageLog[0].roomname).to.equal('main');
-          done();
+        request({
+          method: 'POST',
+          uri: 'http://127.0.0.1:3000/classes/messages',
+          json: {
+            username: 'Gandalf',
+            text: 'You shall not pass!',
+            roomname: 'LOTR'
+          }
+        }, function() {
+          // now running a GET request for all messages, we should see all the data we just inserted
+          request({
+            method: 'GET',
+            uri: 'http://127.0.0.1:3000/classes/messages'
+          }, (err, res, body) => {
+            const data = [{
+              roomname: 'Les Mis',
+              text: 'In mercy\'s name, three days is all I need.',
+              username: 'Valjean'
+            }, {
+              roomname: 'LOTR',
+              text: 'You shall not pass!',
+              username: 'Gandalf'
+            }];
+            const results = JSON.parse(body);
+            expect(data).to.deep.equal(results);
+            done();
+          });
         });
       });
     });

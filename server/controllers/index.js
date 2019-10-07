@@ -6,16 +6,21 @@ module.exports = {
     get: function (req, res) {
       //get all the messages
       models.messages.get((err, messages) => {
-        if (err) { throw err; }
-        res.status(200).send(messages);
+        if (err) {
+          res.status(400).send(err);
+        } else {
+          res.status(200).send(messages);
+        }
       });
     },
     // a function which handles posting a message to the database
     post: function (req, res) {
-      // console.log('req.body: ', req.body);
       models.messages.post(req.body, (err, data) => {
-        if (err) { throw err; }
-        res.sendStatus(400);
+        if (err) {
+          res.status(400).send(err);
+        } else {
+          res.status(400).send();
+        }
       });
     }
   },

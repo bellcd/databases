@@ -4,7 +4,8 @@ var Promise = require('bluebird');
 module.exports = {
   messages: {
     get: function (callback) {
-      db.dbConnection.query('SELECT text FROM messages', (err, messages) => {
+      var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id = users.id inner join rooms on messages.id_rooms = rooms.id;";
+      db.dbConnection.query(queryString, (err, messages) => {
         if (err) { callback(err, null); }
         callback(null, messages);
       });
@@ -87,12 +88,10 @@ module.exports = {
           callback(new Error('Username unavailable. Please choose another.'), null);
         } else {
           console.log('3');
-          // console.log('user.username: ', user.username);
           db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err, results) => {
             if (err) {
               callback(err, null);
             } else {
-              // console.log('here');
               callback();
               // callback(results, err)  // TODO: why does the promisified version of this function not work with this setup?? ie, it doesn't invoke the next .then() call on the promise returned by this promisified function ...
             }
@@ -113,7 +112,6 @@ module.exports = {
       });
     },
     post: function (room, callback) {
-      // console.log('room.roomname: ', room.roomname);
       db.dbConnection.query(`SELECT roomname FROM rooms WHERE roomname = '${room.roomname}'`, (err, results) => {
         if (err) {
           callback(err, null);
