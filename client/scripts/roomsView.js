@@ -30,10 +30,8 @@ var RoomsView = {
   render: function(roomName) {
     this.roomList.push(roomName);
     $('#rooms select option[selected]').removeAttr('selected');
-
     $('#rooms select').append(`<option value="${roomName}" selected>${roomName}</option>`);
-    this.currentlySelected = roomName;
-    $('#get-only-one-room button span').text(this.currentlySelected);
+    this.selectRoom(roomName);
   },
 
   renderAll: function(rooms) {
@@ -44,8 +42,14 @@ var RoomsView = {
       $('#rooms select').append(`<option value="${roomName}">${roomName}</option>`);
     });
 
-    this.currentlySelected = this.roomList[0];
-    $('#get-only-one-room button span').text(this.currentlySelected);
+    this.selectRoom(this.roomList[0]);
+  },
+
+  selectRoom: function(room) {
+    this.currentlySelected = room;
+    $('#get-only-one-room button span').text(room);
+    $('#rooms select option[selected]').removeAttr('selected');
+    $(`#rooms select option[value="${room}"]`).prop('selected', true);
   }
 
 };
