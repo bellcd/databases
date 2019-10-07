@@ -71,6 +71,3 @@ results
 .floobit
 .floo
 .flooignore
-
-## API keys
-client/env/config.js
