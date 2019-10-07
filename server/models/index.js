@@ -13,7 +13,8 @@ module.exports = {
       // console.log('inside models.messages.post, message.roomname: ', message.roomname);
       let text = message.text;
 
-      // promises ?? for getting user_id & roomname_id ?? ... this seems a little WET ...
+      // promises for getting user_id & roomname_id
+      // TODO: refactor so this is let wet ...
       const userID = db.dbConnection.queryAsync(`SELECT id FROM users WHERE users.username = ?`, [message.username])
         .then((users) => {
           // if the user table doesn't have a record for that username, create one
@@ -55,39 +56,13 @@ module.exports = {
         .catch((err) => callback(err, null));
 
       Promise.all([userID, roomID])
-        .then((results) => {
-          console.log(`results from promise.all: `, results);
-          callback(); // TODO: move this!
+        .then((placeholder) => {
+          // insert the message text, roomID, and userID into the message table
+          db.dbConnection.query(`INSERT INTO messages (text, id_users, id_rooms) VALUES ("${text}", ?, ?)`, placeholder, (err, results, fields) => {
+            if (err) { throw err; }
+            callback();
+          });
         });
-
-
-
-      // gets the relevant ID from the users table for a particular username
-      // db.dbConnection.query(`SELECT id FROM users WHERE users.username = '${message.username}'`, (err, results) => {
-      //   if (err) { throw err; }
-      //   // adds a roomname record for this room
-      //   // should we have logic that checks if the room exists already before adding it??
-      //   db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${message.roomname}')`, (err, results, fields) => {
-      //     if (err) { throw err; }
-      //     // console.log('room insert results: ', results);
-
-      //     // get the ID from the rooms table for a given room (this assumes there are values in the rooms table already)
-      //     db.dbConnection.query(`SELECT id FROM rooms WHERE rooms.roomname = '${message.roomname}'`, (err, results, fields) => {
-      //       if (err) { throw err; }
-      //       // console.log('room select results: ', results);
-      //       let roomnameID = results[0].id;
-
-      //       let placeholders = [userID, roomnameID];
-      //       // insert the message text and room / user IDs into the message table
-      //       db.dbConnection.query(`INSERT INTO messages (text, id_users, id_rooms) VALUES ("${text}", ?, ?)`, placeholders, (err, results, fields) => {
-      //         // console.log('userID: ', userID);
-      //         if (err) { throw err; }
-      //         // console.log('insert results: ', results);
-      //         callback();
-      //       });
-      //     });
-      //   });
-      // });
     }
   },
 

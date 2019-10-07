@@ -220,7 +220,8 @@ describe('Persistent Node Chat Server', function() {
       });
     });
 
-    it.only('Changing test ... Should insert POSTed messages to the DB', function(done) {
+    // TODO: should this be multiple tests?
+    it('Should insert POSTed messages to the DB, and create username & roomname if needed', function(done) {
       // post a message to the chat server, without having posted a user previously
       request({
         method: 'POST',
@@ -231,16 +232,25 @@ describe('Persistent Node Chat Server', function() {
           roomname: 'Hello'
         }
       }, function() {
-        // // Now if we look in the database, we should find the posted message there.
-        // var queryString = 'SELECT * FROM messages';
-        // var queryArgs = [];
+        // Now if we look in the database, we should find the posted message there.
+        dbConnection.query('SELECT * FROM messages', function(err, results) {
+          if (err) { throw err; }
+          expect(results.length).to.equal(1);
+          expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
+        });
 
-        // dbConnection.query(queryString, queryArgs, function(err, results) {
-        //   if (err) { throw err; }
-        //   // Should have one result:
-        //   expect(results.length).to.equal(1);
-        //   expect(results[0].text).to.equal('In mercy\'s name, three days is all I need.');
-        done();
+        dbConnection.query('SELECT * FROM users', function(err, results) {
+          if (err) { throw err; }
+          expect(results.length).to.equal(1);
+          expect(results[0].username).to.equal('Valjean');
+        });
+
+        dbConnection.query('SELECT * FROM rooms', function(err, results) {
+          if (err) { throw err; }
+          expect(results.length).to.equal(1);
+          expect(results[0].roomname).to.equal('Hello');
+          done(); // I *believe* these calls to query are queued, so they'll run synchronously ...
+        });
       });
     });
 
