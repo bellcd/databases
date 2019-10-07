@@ -18,7 +18,6 @@ var App = {
     // attach click handler on refresh button to invoke Parse.readAll onclick
     $('#refresh').click(() => {
       RoomsView.selectRoom('All');
-
       Parse.readAll((data) => {
         console.log('data: ', data);
         MessagesView.render(data);
