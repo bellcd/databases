@@ -58,6 +58,17 @@ var Parse = {
         console.error('chatterbox: Failed to fetch messages', error);
       }
     });
+  },
+
+  getRooms: function(successCB, errorCB = null) {
+    $.ajax({
+      url: `${Parse.server}/rooms`,
+      type: 'GET',
+      success: successCB,
+      error: errorCB || function(error) {
+        console.error('chatterbox: Failed to fetch messages', error);
+      }
+    });
   }
 
 };

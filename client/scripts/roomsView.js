@@ -1,9 +1,8 @@
-// TODO: adds things here
 var RoomsView = {
 
   $button: $('#rooms button'),
   $select: $('#rooms select'),
-  roomList: ['All'],
+  roomList: [],
   currentlySelected: '',
 
   initialize: function() {
@@ -22,11 +21,26 @@ var RoomsView = {
         MessagesView.showOrHideMessage(this, messageRoom, RoomsView.currentlySelected);
       });
     });
+
+    Rooms.getRooms();
   },
 
+  // TODO: there's likely a cleaner / more straighforward way to handle rendering all the rooms from the db
   render: function(roomName) {
     this.roomList.push(roomName);
-    $('#rooms select').append(`<option value="${roomName}">${roomName}</option>`);
+    $('#rooms select option[selected]').removeAttr('selected');
+
+    $('#rooms select').append(`<option value="${roomName}" selected>${roomName}</option>`);
+    this.currentlySelected = roomName;
+  },
+
+  renderAll: function(rooms) {
+    this.roomList = rooms.map((room) => room.roomname);
+
+    $('#rooms select').html('');
+    this.roomList.forEach((roomName) => {
+      $('#rooms select').append(`<option value="${roomName}">${roomName}</option>`);
+    });
   }
 
 };
