@@ -2,7 +2,9 @@
 var Rooms = {
   add: function() {
     let roomName = $('#rooms input').val();
-    RoomsView.render(roomName);
+    Parse.addRoom(() => {
+      RoomsView.render(roomName);
+    }, null, roomName);
     $('#rooms input').html('');
   },
 };

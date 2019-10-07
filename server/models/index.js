@@ -112,13 +112,18 @@ module.exports = {
       });
     },
     post: function (room, callback) {
+      console.log('inside models rooms.post room: ', room);
       db.dbConnection.query(`SELECT roomname FROM rooms WHERE roomname = '${room.roomname}'`, (err, results) => {
         if (err) {
+          console.log('1');
           callback(err, null);
         } else if (results.length === 1) {
+          console.log('2');
           // that roomname already exists in the room table
-          callback(new Error('Room already exists!'), null);
+          callback();
+          // callback(new Error(`roomname ${room.roomname} already exists. No room created`), null); // In a case like this, s it better to send back some sort of error, or take no action?
         } else {
+          console.log('3');
           db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err, results) => {
             if (err) { callback(err, null); }
             callback();
