@@ -14,6 +14,7 @@ CREATE TABLE users (
   PRIMARY KEY (ID)
 );
 
+
 CREATE TABLE messages (
   ID int AUTO_INCREMENT,
   text varchar(255),
