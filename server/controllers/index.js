@@ -17,9 +17,10 @@ module.exports = {
     post: function (req, res) {
       models.messages.post(req.body, (err, data) => {
         if (err) {
+          // console.log('err: ', err);
           res.status(400).send(err);
         } else {
-          res.status(400).send();
+          res.status(200).send();
         }
       });
     }
