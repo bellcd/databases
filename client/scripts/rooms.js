@@ -1,11 +1,11 @@
 var Rooms = {
-  add: function() {
-    let roomName = $('#rooms input').val();
-    if (roomName === '') { return; }
+  add: function(roomname) {
+    roomname = roomname ? roomname : roomname = $('#rooms input').val();
+    if (roomname === '') { return; }
 
     Parse.addRoom(() => {
-      RoomsView.render(roomName);
-    }, null, roomName);
+      RoomsView.render(roomname);
+    }, null, roomname);
     $('#rooms input').val('');
   },
 

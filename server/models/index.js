@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 module.exports = {
   messages: {
     get: function (callback) {
-      var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id = users.id inner join rooms on messages.id_rooms = rooms.id;";
+      var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id_users = users.id inner join rooms on messages.id_rooms = rooms.id;";
       db.dbConnection.query(queryString, (err, messages) => {
         if (err) { callback(err, null); }
         callback(null, messages);

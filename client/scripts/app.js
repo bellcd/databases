@@ -22,7 +22,7 @@ var App = {
       });
     });
 
-    // attach click handler for refresh button getting only certain messages from the server
+    // attach click handler for get-only-certain-messages button
     $('#get-only-one-room').click(() => {
       Parse.readOnlySomeRooms((data) => {
         MessagesView.render(data);

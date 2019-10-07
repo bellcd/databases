@@ -21,7 +21,6 @@ var Parse = {
     $.ajax({
       url: `${Parse.server}/messages`,
       type: 'GET',
-      data: { order: '-createdAt' },
       contentType: 'application/json',
       success: successCB,
       error: errorCB || function(error) {
@@ -31,11 +30,16 @@ var Parse = {
   },
 
   // TODO: verify that this works??
-  readOnlySomeRooms: function(successCB, errorCB = null, roomName) {
+  readOnlySomeRooms: function(successCB, errorCB = null, roomname) {
+    roomname = {
+      roomname: roomname
+    };
+    console.log('roomname: ', roomname);
     $.ajax({
-      url: `http://parse.${window.CAMPUS}.hackreactor.com/chatterbox/classes/messages?where={"roomname":"${roomName}"}`,
+      url: `${Parse.server}/messages`,
+      // url: `http://parse.${window.CAMPUS}.hackreactor.com/chatterbox/classes/messages?where={"roomname":"${roomName}"}`,
       type: 'GET',
-      data: { order: '-createdAt' },
+      data: JSON.stringify(roomname),
       contentType: 'application/json',
       success: successCB,
       error: errorCB || function(error) {

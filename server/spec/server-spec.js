@@ -10,6 +10,7 @@ describe('Persistent Node Chat Server', function() {
 
   // TODO: change truncating tables logic to use this function, instead of repeating same logic in beforeEach / afterEach
   // TODO: change one of beforeEach / afterEach to only run before the whole test suite, or after the whole test suite
+  // be aware, truncating the tables means we're deleting all the records from the database every time we run the test suite
   function cleanTables(dbConnection) {
     var tablename1 = "messages";
     var tablename2 = "rooms";

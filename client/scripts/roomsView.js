@@ -2,7 +2,7 @@ var RoomsView = {
 
   $button: $('#rooms button'),
   $select: $('#rooms select'),
-  roomList: [],
+  roomList: ['All'],
   currentlySelected: '',
 
   initialize: function() {
@@ -23,6 +23,7 @@ var RoomsView = {
     });
 
     Rooms.getRooms();
+    Rooms.add('All');
   },
 
   // TODO: there's likely a cleaner / more straighforward way to handle rendering all the rooms from the db
@@ -32,6 +33,7 @@ var RoomsView = {
 
     $('#rooms select').append(`<option value="${roomName}" selected>${roomName}</option>`);
     this.currentlySelected = roomName;
+    $('#get-only-one-room button span').text(this.currentlySelected);
   },
 
   renderAll: function(rooms) {
@@ -41,6 +43,9 @@ var RoomsView = {
     this.roomList.forEach((roomName) => {
       $('#rooms select').append(`<option value="${roomName}">${roomName}</option>`);
     });
+
+    this.currentlySelected = this.roomList[0];
+    $('#get-only-one-room button span').text(this.currentlySelected);
   }
 
 };
