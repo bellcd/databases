@@ -61,10 +61,10 @@ if (useORM) {
 
   afterEachFn = function(done) {
 
-    messages.setTasks([])
-      .then(associatedTasks => {
-        // you will get an empty array
-      });
+    // messages.setTasks([])
+    //   .then(associatedTasks => {
+    //     // you will get an empty array
+    //   });
 
     dbConnection.truncate()
       .then(() => {
@@ -199,31 +199,31 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
   afterEach(afterEachFn);
 
   describe('users table', function() {
-    it.only('Should add a user to the DB', function(done) {
-      // request({
-      //   method: 'POST',
-      //   uri: 'http://127.0.0.1:3000/classes/users',
-      //   json: { username: 'Santa Claus' }
-      // }, function() {
-      //   dbConnection.query('SELECT username FROM users', (err, results) => {
-      //     expect(results).to.have.lengthOf(1);
-      //     const username = results[0].username;
-      //     expect(username).to.equal('Santa Claus');
-      //     done();
-      //   });
-      // });
-
-      User.create({ username: 'Santa Claus' })
-        .then(() => {
-          return User.findAll({ where: { username: 'Santa Claus' } });
-        })
-        .then((user) => {
-          // console.log('user: ', user);
+    it('Should add a user to the DB', function(done) {
+      request({
+        method: 'POST',
+        uri: 'http://127.0.0.1:3000/classes/users',
+        json: { username: 'Santa Claus' }
+      }, function() {
+        dbConnection.query('SELECT username FROM users', (err, results) => {
+          expect(results).to.have.lengthOf(1);
+          const username = results[0].username;
+          expect(username).to.equal('Santa Claus');
           done();
-        })
-        .catch((err) => {
-          throw err;
         });
+      });
+
+      // User.create({ username: 'Santa Claus' })
+      //   .then(() => {
+      //     return User.findAll({ where: { username: 'Santa Claus' } });
+      //   })
+      //   .then((user) => {
+      //     // console.log('user: ', user);
+      //     done();
+      //   })
+      //   .catch((err) => {
+      //     throw err;
+      //   });
     });
 
     it(`Should only add a user to the DB if that user doesn't already exist`, function(done) {
@@ -283,7 +283,7 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
     });
   });
 
-  xdescribe('rooms table', function() {
+  describe('rooms table', function() {
     it('Should add a room to the DB', function(done) {
       request({
         method: 'POST',
@@ -356,7 +356,7 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
     });
   });
 
-  xdescribe('messages table', function() {
+  describe('messages table', function() {
 
     // TODO: should this be multiple tests?
     it('Should insert messages to the DB, and create username & roomname values in respective tables if needed', function(done) {
