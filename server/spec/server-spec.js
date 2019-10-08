@@ -61,18 +61,61 @@ if (useORM) {
 
   afterEachFn = function(done) {
 
+
     // messages.setTasks([])
     //   .then(associatedTasks => {
     //     // you will get an empty array
     //   });
 
-    dbConnection.truncate()
+    dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_rooms`)
+      .then(() => {
+        return dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_users`);
+      })
+      .then(() => {
+        return Message.truncate({ cascade: true });
+      })
+      .then(() => {
+        return User.truncate({ cascade: true });
+      })
+      .then(() => {
+        return Room.truncate({ cascade: true });
+      })
+      .then(() => {
+        return dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`); // confirm syntax // maybe without ADD CONSTRAINT id_rooms
+      })
+      .then(() => {
+        return dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`);
+      })
       .then(() => {
         done();
       })
       .catch((err) => {
-        throw err;
+        console.log('err: ', err);
+        done();
       });
+
+    // User.findAll().then(users => {
+    //   console.log("All users:", JSON.stringify(users, null, 4));
+    //   done();
+    // });
+
+    // Message.truncate()
+    //   .then(() => {
+    //     return User.truncate(() => {});
+    //   })
+    //   .then(() => {
+    //     return Room.truncate(() => {});
+    //   })
+    //   .then(() => {
+    //     done();
+    //   })
+    //   .catch((err) => {
+    //     console.log('err: ', err);
+    //   });
+    // dbConnection.truncate()
+    //   .then(() => {
+    //     done();
+    //   })
   };
 
   afterFn = function(done) {
@@ -89,13 +132,17 @@ if (useORM) {
 } else {
   var mysql = require('mysql');
 
-  beforeFn = (done) => { done(); };
-  beforeEachFn = function(done) {
+  beforeFn = (done) => {
     dbConnection = mysql.createConnection({
       user: 'root',
       database: 'chat'
     });
     dbConnection.connect();
+    done();
+  };
+
+  beforeEachFn = function(done) {
+
 
     var tablename1 = "messages";
     var tablename2 = "rooms";
@@ -103,14 +150,21 @@ if (useORM) {
 
     // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
 
-    // drop the foreign key constraints from the messages table
+    // // drop the foreign key constraints from the messages table
     dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
     dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
 
     // truncate messages, rooms, and users tables
-    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+    // dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    dbConnection.query(`TRUNCATE TABLE ${tablename2}`, () => {
+      dbConnection.query(`TRUNCATE TABLE ${tablename3}`, () => {
+        dbConnection.query(`TRUNCATE TABLE ${tablename1}`, () => {
+          dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, () => {
+            dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+          });
+        });
+      });
+    });
 
     // dbConnection.query('SELECT * FROM users', (err, results) => {
     //   console.log('results: ', results);
@@ -119,42 +173,47 @@ if (useORM) {
     // adds the foreign key constraints to the messages table
     // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
     // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+
 
     // cleanTables(dbConnection); // alternate approach
   };
 
-  afterFn = (done) => { done(); };
+  afterFn = (done) => {
+    // console.log('FINISHED');
+    done();
+  };
   afterEachFn = function(done) {
+    // console.log('finished each');
+    done();
 
-    var tablename1 = "messages";
-    var tablename2 = "rooms";
-    var tablename3 = "users";
+    // var tablename1 = "messages";
+    // var tablename2 = "rooms";
+    // var tablename3 = "users";
 
-    // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
+    // // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
 
-    // drop the foreign key constraints from the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+    // // drop the foreign key constraints from the messages table
+    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
+    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
 
-    // truncate messages, rooms, and users tables
-    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
+    // // truncate messages, rooms, and users tables
+    // dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
+    // dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
+    // dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
 
-    // dbConnection.query('SELECT * FROM users', (err, results) => {
-    //   console.log('results: ', results);
+    // // dbConnection.query('SELECT * FROM users', (err, results) => {
+    // //   console.log('results: ', results);
+    // // });
+
+    // // adds the foreign key constraints to the messages table
+    // // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+    // // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, () => {
+    //   dbConnection.end();
+    //   done();
     // });
 
-    // adds the foreign key constraints to the messages table
-    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
-    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, () => {
-      dbConnection.end();
-      done();
-    });
 
     // cleanTables(dbConnection); // alternate approach
   };
@@ -197,6 +256,7 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
   before(beforeFn);
   beforeEach(beforeEachFn);
   afterEach(afterEachFn);
+  after(afterFn);
 
   describe('users table', function() {
     it('Should add a user to the DB', function(done) {
@@ -434,6 +494,4 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
       });
     });
   });
-
-  after(afterFn);
 });

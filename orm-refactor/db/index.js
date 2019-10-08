@@ -27,8 +27,8 @@ var Message = db.define('message', {
 //   modelName: 'message' // setting up this Model using the alternate syntax so I can create this { modelName: 'message' }. Apparently that will provide access to a function that will allow me to remove the foreign keys from the tables ... is this accurate??
 // });
 
-User.hasMany(Message, { foreignKey: 'id_users'} );
-Room.hasMany(Message, { foreignKey: 'id_rooms'} );
+User.hasMany(Message, { foreignKey: 'id_users', constraints: false } );
+Room.hasMany(Message, { foreignKey: 'id_rooms', constraints: false });
 
 // Message.belongsTo(User, { as: 'test_value', foreignKey: 'id_users'} ); // do I need this ??
 
