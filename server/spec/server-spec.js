@@ -1,5 +1,5 @@
-/* You'll need to have MySQL running and your Node server running
- * for these tests to pass. */
+// environment variable to signal whether to test using an ORM or not
+console.log(process.env.npm_config_orm);
 
 var mysql = require('mysql');
 var request = require('request'); // You might need to npm install the request module!

@@ -12,7 +12,10 @@
     "postinstall": "curl -s https://raw.githubusercontent.com/reactorcore/pomander/master/bin/install | bash",
     "start": "nodemon ./server/app.js",
     "start:es6": "babel-node ./server/app.js",
-    "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; open ./SpecRunner.html; exit $RES;",
+    "test": "npm --orm=no-orm run test-both",
+    "test-orm": "npm --orm=orm run test-both",
+    "test-orm-no-orm": "npm run test; npm run test-orm",
+    "test-both": "mocha server/spec/server-spec.js; RES=$?; kill %1; open ./SpecRunner.html; exit $RES;",
     "test-server": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "test-client": "open ./SpecRunner.html",
     "test:es6": "mocha --compilers js:babel-register server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
@@ -27,7 +30,7 @@
     "mysql": "^2.17.1",
     "nodemon": "^1.19.3",
     "request": "^2.88.0",
-    "sequelize": "^3.21.0",
+    "sequelize": "^3.35.1",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
