@@ -1,5 +1,9 @@
 var express = require('express');
-var db = require('./db');
+// var db = require('./db');
+
+// // ORM refactor
+// var db = require('../orm-refactor/db/index.js'); // not needed??
+
 
 // Middleware
 var morgan = require('morgan');
@@ -32,6 +36,6 @@ if (!module.parent) {
   console.log('Listening on', app.get('port'));
 }
 
-db.dbConnection.connect();
+// db.dbConnection.connect(); // not needed because using ORM ??
 
 module.exports.app = app;

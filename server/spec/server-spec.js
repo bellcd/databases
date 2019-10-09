@@ -36,13 +36,15 @@ if (useORM) {
   };
   beforeEachFn = function(done) {
 
-    dbConnection.sync()
-      .then(() => {
-        done(); // remember to invoke done, and move on to the next test, only AFTER each table has been synced!
-      })
-      .catch((err) => {
-        throw err;
-      });
+    // dbConnection.sync()
+    //   .then(() => {
+    //     done(); // remember to invoke done, and move on to the next test, only AFTER each table has been synced!
+    //   })
+    //   .catch((err) => {
+    //     throw err;
+    //   });
+
+    done();
   };
 
   afterEachFn = function(done) {
@@ -201,7 +203,7 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
   after(afterFn);
 
   describe('users table', function() {
-    it('Should add a user to the DB', function(done) {
+    it.only('Should add a user to the DB', function(done) {
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/users',

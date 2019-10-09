@@ -24,6 +24,8 @@ User.sync(); // why does this not work when { force: true } is passed to each on
 Room.sync();
 Message.sync();
 
+// db.sync(); // could alternatively call sync() on the connection as a whole, instead of individually on each model ...
+
 module.exports = {
   db,
   User,

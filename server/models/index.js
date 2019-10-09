@@ -7,13 +7,19 @@ var Promise = require('bluebird');
 
 module.exports = {
   messages: {
-    get: function (callback) {
-      var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id_users = users.id inner join rooms on messages.id_rooms = rooms.id;";
-      db.dbConnection.query(queryString, (err, messages) => {
-        if (err) { callback(err, null); }
-        callback(null, messages);
-      });
+    get: function() {
+      db.User.findAll()
+        .then((users) => {
+          console.log('users: ', users);
+        })
     },
+    // get: function (callback) {
+    //   var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id_users = users.id inner join rooms on messages.id_rooms = rooms.id;";
+    //   db.dbConnection.query(queryString, (err, messages) => {
+    //     if (err) { callback(err, null); }
+    //     callback(null, messages);
+    //   });
+    // },
     post: function (message, callback) {
       // console.log('inside models.messages.post, message.roomname: ', message.roomname);
       let text = message.text;
@@ -81,28 +87,41 @@ module.exports = {
         }
       });
     },
-    post: function (user, callback) {
-      db.dbConnection.query(`SELECT username FROM users WHERE username = '${user.username}'`, (err, results) => {
-        if (err) {
-          // console.log('1');
-          callback(err, null);
-        } else if (results.length === 1) {
-          // console.log('2');
-          // that username already exists in the user table
-          callback(new Error('Username unavailable. Please choose another.'), null);
-        } else {
-          // console.log('3');
-          db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err, results) => {
-            if (err) {
-              callback(err, null);
-            } else {
-              callback();
-              // callback(results, err)  // TODO: why does the promisified version of this function not work with this setup?? ie, it doesn't invoke the next .then() call on the promise returned by this promisified function ...
-            }
-          });
-        }
-      });
-    }
+    post: function(user) {
+      console.log('inside models users.post user: ', user);
+      return db.User.sync()
+        .then(() => {
+          return db.User.create({ username: user.username })
+        })
+        .then((results) => {
+          console.log('results: ', results);
+        })
+        .catch((err) => {
+          return err;
+        });
+    },
+    // post: function (user, callback) {
+    //   db.dbConnection.query(`SELECT username FROM users WHERE username = '${user.username}'`, (err, results) => {
+    //     if (err) {
+    //       // console.log('1');
+    //       callback(err, null);
+    //     } else if (results.length === 1) {
+    //       // console.log('2');
+    //       // that username already exists in the user table
+    //       callback(new Error('Username unavailable. Please choose another.'), null);
+    //     } else {
+    //       // console.log('3');
+    //       db.dbConnection.query(`INSERT INTO users (username) VALUES ('${user.username}')`, (err, results) => {
+    //         if (err) {
+    //           callback(err, null);
+    //         } else {
+    //           callback();
+    //           // callback(results, err)  // TODO: why does the promisified version of this function not work with this setup?? ie, it doesn't invoke the next .then() call on the promise returned by this promisified function ...
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
   },
 
   rooms: {
@@ -138,10 +157,11 @@ module.exports = {
   }
 };
 
-Promise.promisifyAll(db.dbConnection); // this is currently erroring ...
-Promise.promisifyAll(module.exports.messages);
-Promise.promisifyAll(module.exports.users);
-Promise.promisifyAll(module.exports.rooms);
+// // not sure I'm going to use these with Sequelize ...
+// Promise.promisifyAll(db.dbConnection);
+// Promise.promisifyAll(module.exports.messages);
+// Promise.promisifyAll(module.exports.users);
+// Promise.promisifyAll(module.exports.rooms);
 
 // // *********************************************************
 // // *********************NON-ORM VERSION*********************

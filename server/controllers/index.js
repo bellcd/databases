@@ -40,14 +40,24 @@ module.exports = {
       });
     },
     post: function (req, res) {
-      models.users.post(req.body, (err) => {
-        if (err) {
-          res.status(400).send(err);
-        } else {
+      models.users.post(req.body)
+        .then(() => {
           res.status(200).send();
-        }
-      });
+        })
+        .catch((err) => {
+          res.status(400).send(err);
+        })
     }
+    // post: function (req, res) {
+    //   console.log('inside controllers users.post req.body: ', req.body);
+    //   models.users.post(req.body, (err) => {
+    //     if (err) {
+    //       res.status(400).send(err);
+    //     } else {
+    //       res.status(200).send();
+    //     }
+    //   });
+    // }
   },
 
   rooms: {
