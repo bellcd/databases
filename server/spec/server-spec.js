@@ -35,21 +35,6 @@ if (useORM) {
 
   };
   beforeEachFn = function(done) {
-    // // this seems very inefficient to drop and recreate all the tables after each test ...
-    // User = dbConnection.define('user', {
-    //   username: Sequelize.STRING,
-    // });
-
-    // Room = dbConnection.define('room', {
-    //   roomname: Sequelize.STRING
-    // });
-
-    // Message = dbConnection.define('message', {
-    //   text: Sequelize.STRING
-    // });
-
-    // User.hasMany(Message, { foreignKey: 'id_users'} );
-    // Room.hasMany(Message, { foreignKey: 'id_rooms'} );
 
     dbConnection.sync()
       .then(() => {
@@ -61,13 +46,8 @@ if (useORM) {
   };
 
   afterEachFn = function(done) {
-
-
-    // messages.setTasks([])
-    //   .then(associatedTasks => {
-    //     // you will get an empty array
-    //   });
-
+    // TODO: there's probably a way to do this with the Sequelize ORM without using raw SQL queries ...
+    // TODO: might (??) not work if database doesn't already exist from schema file /server/schema.sql
     dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_rooms`)
       .then(() => {
         return dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_users`);
@@ -94,29 +74,6 @@ if (useORM) {
         console.log('err: ', err);
         done();
       });
-
-    // User.findAll().then(users => {
-    //   console.log("All users:", JSON.stringify(users, null, 4));
-    //   done();
-    // });
-
-    // Message.truncate()
-    //   .then(() => {
-    //     return User.truncate(() => {});
-    //   })
-    //   .then(() => {
-    //     return Room.truncate(() => {});
-    //   })
-    //   .then(() => {
-    //     done();
-    //   })
-    //   .catch((err) => {
-    //     console.log('err: ', err);
-    //   });
-    // dbConnection.truncate()
-    //   .then(() => {
-    //     done();
-    //   })
   };
 
   afterFn = function(done) {
@@ -172,10 +129,6 @@ if (useORM) {
         });
       });
     });
-
-    // adds the foreign key constraints to the messages table
-
-
 
     // cleanTables(dbConnection); // alternate approach
   };
