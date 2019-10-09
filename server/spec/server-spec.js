@@ -14,6 +14,7 @@ var User;
 var Room;
 var Message;
 
+
 if (useORM) {
   var dbExports = require('../../orm-refactor/db/index.js');
   dbConnection = dbExports.db;
@@ -142,79 +143,76 @@ if (useORM) {
   };
 
   beforeEachFn = function(done) {
-
-
-    var tablename1 = "messages";
-    var tablename2 = "rooms";
-    var tablename3 = "users";
-
     // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
 
-    // // drop the foreign key constraints from the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
-
-    // truncate messages, rooms, and users tables
-    // dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`, () => {
-      dbConnection.query(`TRUNCATE TABLE ${tablename3}`, () => {
-        dbConnection.query(`TRUNCATE TABLE ${tablename1}`, () => {
-          dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, () => {
-            dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, done);
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_rooms`, (err, results, fields) => {
+      if (err) { throw err; }
+      dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_users`, (err, results, fields) => {
+        if (err) { throw err; }
+        // truncate messages, rooms, and users tables
+        dbConnection.query(`TRUNCATE TABLE messages`, (err, results, fields) => {
+          if (err) { throw err; }
+          dbConnection.query(`TRUNCATE TABLE users`, (err, results, fields)  => {
+            if (err) { throw err; }
+            dbConnection.query(`TRUNCATE TABLE rooms`, (err, results, fields) => {
+              if (err) { throw err; }
+              // add the foreign key constraints back
+              // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+              // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+              dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, (err, results, fields) => {
+                if (err) { throw err; }
+                dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, (err, results, fields) => {
+                  if (err) { throw err; }
+                  done();
+                });
+              });
+            });
           });
         });
       });
     });
 
-    // dbConnection.query('SELECT * FROM users', (err, results) => {
-    //   console.log('results: ', results);
-    // });
-
     // adds the foreign key constraints to the messages table
-    // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
-    // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+
 
 
     // cleanTables(dbConnection); // alternate approach
   };
 
   afterFn = (done) => {
-    // console.log('FINISHED');
-    done();
+    // drop the foreign key constraints from the messages table
+    dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_rooms`, (err, results, fields) => {
+      if (err) { throw err; }
+      dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_users`, (err, results, fields) => {
+        if (err) { throw err; }
+        // truncate messages, rooms, and users tables
+        dbConnection.query(`TRUNCATE TABLE messages`, (err, results, fields) => {
+          if (err) { throw err; }
+          dbConnection.query(`TRUNCATE TABLE users`, (err, results, fields)  => {
+            if (err) { throw err; }
+            dbConnection.query(`TRUNCATE TABLE rooms`, (err, results, fields) => {
+              if (err) { throw err; }
+              // add the foreign key constraints back
+              // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
+              // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
+              dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`, (err, results, fields) => {
+                if (err) { throw err; }
+                dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, (err, results, fields) => {
+                  if (err) { throw err; }
+                  dbConnection.end();
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
   };
   afterEachFn = function(done) {
-    // console.log('finished each');
     done();
-
-    // var tablename1 = "messages";
-    // var tablename2 = "rooms";
-    // var tablename3 = "users";
-
-    // // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
-
-    // // drop the foreign key constraints from the messages table
-    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
-    // dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
-
-    // // truncate messages, rooms, and users tables
-    // dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    // dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
-    // dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
-
-    // // dbConnection.query('SELECT * FROM users', (err, results) => {
-    // //   console.log('results: ', results);
-    // // });
-
-    // // adds the foreign key constraints to the messages table
-    // // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
-    // // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
-    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
-    // dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`, () => {
-    //   dbConnection.end();
-    //   done();
-    // });
-
-
     // cleanTables(dbConnection); // alternate approach
   };
 }
@@ -225,30 +223,22 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
   // TODO: change one of beforeEach / afterEach to only run before the whole test suite, or after the whole test suite
   // be aware, truncating the tables means we're deleting all the records from the database every time we run the test suite
   function cleanTables(dbConnection) {
-    var tablename1 = "messages";
-    var tablename2 = "rooms";
-    var tablename3 = "users";
-
     // Empty the db table before each test so that multiple tests (or repeated runs of the tests) won't screw each other up:
 
     // drop the foreign key constraints from the messages table
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_rooms`);
-    dbConnection.query(`ALTER TABLE ${tablename1} DROP FOREIGN KEY fk_users`);
+    dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_rooms`);
+    dbConnection.query(`ALTER TABLE messages DROP FOREIGN KEY fk_users`);
 
     // truncate messages, rooms, and users tables
-    dbConnection.query(`TRUNCATE TABLE ${tablename1}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename2}`);
-    dbConnection.query(`TRUNCATE TABLE ${tablename3}`);
-
-    // dbConnection.query('SELECT * FROM users', (err, results) => {
-    //   console.log('results: ', results);
-    // });
+    dbConnection.query(`TRUNCATE TABLE messages`);
+    dbConnection.query(`TRUNCATE TABLE rooms`);
+    dbConnection.query(`TRUNCATE TABLE users`);
 
     // adds the foreign key constraints to the messages table
     // added constraints here because otherwise, it *appears* that mysql auto generates a value we would have to find / use
     // https://dev.mysql.com/doc/refman/5.7/en/create-table-foreign-keys.html#foreign-keys-dropping
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
-    dbConnection.query(`ALTER TABLE ${tablename1} ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`);
+    dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_rooms FOREIGN KEY (id_rooms) REFERENCES rooms(id)`);
+    dbConnection.query(`ALTER TABLE messages ADD CONSTRAINT fk_users FOREIGN KEY (id_users) REFERENCES users(id)`);
   }
 
   // cleanTables(dbConnection); // alternate approach
@@ -278,7 +268,6 @@ describe(`Persistent Node Chat Server${useORM ? ' with Sequelize' : ''}`, functi
       //     return User.findAll({ where: { username: 'Santa Claus' } });
       //   })
       //   .then((user) => {
-      //     // console.log('user: ', user);
       //     done();
       //   })
       //   .catch((err) => {

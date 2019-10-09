@@ -5,13 +5,13 @@ module.exports = {
   messages: {
     // a function which handles a get request for all messages
     get: function (req, res) {
-      console.log('inside controllers messages.get req.body: ', req.body);
+      // console.log('inside controllers messages.get req.body: ', req.body);
       //get all the messages
       models.messages.get((err, messages) => {
         if (err) {
           res.status(400).send(err);
         } else {
-          console.log('inside controllers messages.get messages: ', messages);
+          // console.log('inside controllers messages.get messages: ', messages);
           res.status(200).send(messages);
         }
       });

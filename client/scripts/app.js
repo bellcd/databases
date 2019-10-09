@@ -19,7 +19,7 @@ var App = {
     $('#refresh').click(() => {
       RoomsView.selectRoom('All');
       Parse.readAll((data) => {
-        console.log('data: ', data);
+        // console.log('data: ', data);
         MessagesView.render(data);
       });
     });
@@ -36,7 +36,7 @@ var App = {
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
       // examine the response from the server request:
-      console.log(data);
+      // console.log(data);
       MessagesView.render(data);
       callback();
     });

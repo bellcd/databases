@@ -2,7 +2,7 @@ var Parse = {
   server: 'http://127.0.0.1:3000/classes',
 
   create: function(message, successCB, errorCB = null) {
-    console.log('message: ', message);
+    // console.log('message: ', message);
 
     // todo: save a message to the server
     $.ajax({
@@ -34,7 +34,7 @@ var Parse = {
     roomname = {
       roomname: roomname
     };
-    console.log('roomname: ', roomname);
+    // console.log('roomname: ', roomname);
     $.ajax({
       url: `${Parse.server}/messages`,
       // url: `http://parse.${window.CAMPUS}.hackreactor.com/chatterbox/classes/messages?where={"roomname":"${roomName}"}`,

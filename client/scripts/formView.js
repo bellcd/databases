@@ -15,7 +15,7 @@ var FormView = {
     // Stop the browser from submitting the form
     event.preventDefault();
 
-    console.log(usernameValue);
+    // console.log(usernameValue);
 
     // get values from form fields
     var message = {
@@ -24,13 +24,13 @@ var FormView = {
       roomname: roomValue
     };
 
-    console.log(message);
+    // console.log(message);
 
     Parse.create(message, (data) => {
-      console.log('data POSTed successfully.');
+      // console.log('data POSTed successfully.');
     });
 
-    console.log('click!');
+    // console.log('click!');
 
     // reset messageField to blank
   },
