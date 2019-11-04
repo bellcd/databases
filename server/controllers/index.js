@@ -16,13 +16,21 @@ module.exports = {
         // findOrCreate returns multiple resutls in an array
         // use spread to assign the array to function arguments
         .spread(function(user, created) {
-          db.Message.create({
-            UserId: user.get('id'),
-            text: req.body.text,
-            roomname: req.body.roomname
-          }).then(function(message) {
-            res.sendStatus(201);
-          });
+          db.Room.findOrCreate({where: {roomname: req.body.roomname}})
+            .spread(function(room, created) {
+              console.log('room: ', room);
+              console.log('user: ', user);
+
+              console.log('req.body: ', req.body);
+
+              db.Message.create({
+                UserId: user.get('id'),
+                text: req.body.text,
+                RoomId: room.get('id')
+              }).then(function(message) {
+                res.sendStatus(201);
+              });
+            })
         });
     }
   },
@@ -39,6 +47,22 @@ module.exports = {
         // findOrCreate returns multiple resutls in an array
         // use spread to assign the array to function arguments
         .spread(function(user, created) {
+          res.sendStatus(created ? 201 : 200);
+        });
+    }
+  },
+  rooms: {
+    get: function (req, res) {
+      db.Room.findAll()
+        .then(function(rooms) {
+          res.json(rooms);
+        })
+    },
+    post: function (req, res) {
+      console.log(req.body);
+
+      db.Room.findOrCreate({ where: {roomname: req.body.roomname }})
+        .spread(function(room, created) {
           res.sendStatus(created ? 201 : 200);
         });
     }
