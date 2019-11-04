@@ -1,42 +1,21 @@
+
 var Rooms = {
+  add: function(roomname) {
+    roomname = roomname ? roomname : roomname = $('#rooms input').val();
+    if (roomname === '') { return; }
 
-
-  _data: new Set,
-
-  selected: 'lobby',
-
-  items: function() {
-    return _.chain([...Rooms._data]);
+    Parse.addRoom(() => {
+      RoomsView.render(roomname);
+    }, null, roomname);
+    $('#rooms input').val('');
   },
 
-  isSelected: function(roomname) {
-    return roomname === Rooms.selected ||
-           !roomname && Rooms.selected === 'lobby';
-  },
-
-  add: function(room, callback = ()=>{}) {
-    Rooms._data.add(room);
-    Rooms.selected = room;
-    callback(Rooms.items());
-  },
-
-  update: function(messages, callback = ()=>{}) {
-    var length = Rooms._data.size;
-
-    _.chain(messages)
-      .pluck('roomname')
-      .uniq()
-      .each(room => Rooms._data.add(room));
-
-    if (Rooms.selected === null) {
-      // make the first room the default selected room
-      Rooms.selected = Rooms._data.values().next().value;
-    }
-
-    // only invoke the callback if something changed
-    if (Rooms._data.size !== length) {
-      callback(Rooms.items());
-    }
+  getRooms: function() {
+    Parse.getRooms((rooms) => { // TODO: jQuery's ajax() success callback's don't use error first callback style??
+      if (Object.keys(rooms).length === 0) {
+        rooms = [{ roomname: 'All' }];
+      }
+      RoomsView.renderAll(rooms);
+    });
   }
-
 };

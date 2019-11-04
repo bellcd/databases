@@ -17,8 +17,8 @@ module.exports = {
         // use spread to assign the array to function arguments
         .spread(function(user, created) {
           db.Message.create({
-            userid: user.get('id'),
-            text: req.body.message,
+            UserId: user.get('id'),
+            text: req.body.text,
             roomname: req.body.roomname
           }).then(function(message) {
             res.sendStatus(201);

@@ -1,19 +1,9 @@
 var MessageView = {
-
   render: _.template(`
-      <!--
-
-      -->
       <div class="chat">
-        <div
-          class="username <%= Friends.isFriend(username) ? 'friend' : '' %>"
-          data-username="<%- username %>">
-          <%- username %>
+        <div class="username"><%- username %></div>
+        <div class="user-message"><%- text %></div>
+        <div class="roomname"><%- roomname %></div>
         </div>
-        <div><%- text %></div>
-      </div>
-      <!--
-            -->
-    `)
-
+        `)
 };

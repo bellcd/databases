@@ -2,40 +2,54 @@ var RoomsView = {
 
   $button: $('#rooms button'),
   $select: $('#rooms select'),
+  roomList: ['All'],
+  currentlySelected: '',
 
   initialize: function() {
+    $('#rooms button').click(() => {
+      Rooms.add.call(this);
+    });
 
-    RoomsView.$select.on('change', RoomsView.handleChange);
-    RoomsView.$button.on('click', RoomsView.handleClick);
-  },
+    this.$select.on('change', () => {
+      this.currentlySelected = $('#rooms select').val();
+      let $allMessages = $('#chats');
 
-  render: function() {
+      $('#get-only-one-room button span').text(this.currentlySelected);
 
-    RoomsView.$select.html('');
-    Rooms
-      .items()
-      .each(RoomsView.renderRoom);
-    RoomsView.$select.val(Rooms.selected);
-  },
-
-  renderRoom: function(roomname) {
-    var $option = $('<option>').val(roomname).text(roomname);
-    RoomsView.$select.append($option);
-  },
-
-  handleChange: function(event) {
-    Rooms.selected = RoomsView.$select.val();
-    MessagesView.render();
-  },
-
-  handleClick: function(event) {
-    var roomname = prompt('Enter room name');
-    if (roomname) {
-      Rooms.add(roomname, () => {
-        RoomsView.render();
-        MessagesView.render();
+      $allMessages.children().each(function() {
+        let messageRoom = this.children[2].innerHTML;
+        MessagesView.showOrHideMessage(this, messageRoom, RoomsView.currentlySelected);
       });
-    }
+    });
+
+    Rooms.getRooms();
+    Rooms.add('All');
+  },
+
+  // TODO: there's likely a cleaner / more straighforward way to handle rendering all the rooms from the db
+  render: function(roomName) {
+    this.roomList.push(roomName);
+    $('#rooms select option[selected]').removeAttr('selected');
+    $('#rooms select').append(`<option value="${roomName}" selected>${roomName}</option>`);
+    this.selectRoom(roomName);
+  },
+
+  renderAll: function(rooms) {
+    this.roomList = rooms.map((room) => room.roomname);
+
+    $('#rooms select').html('');
+    this.roomList.forEach((roomName) => {
+      $('#rooms select').append(`<option value="${roomName}">${roomName}</option>`);
+    });
+
+    this.selectRoom(this.roomList[0]);
+  },
+
+  selectRoom: function(room) {
+    this.currentlySelected = room;
+    $('#get-only-one-room button span').text(room);
+    $('#rooms select option[selected]').removeAttr('selected');
+    $(`#rooms select option[value="${room}"]`).prop('selected', true);
   }
 
 };

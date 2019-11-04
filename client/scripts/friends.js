@@ -1,24 +1,34 @@
 var Friends = {
+  friendsList: [],
 
-
-  _data: new Set,
-
-  items: function() {
-    return _.chain([...Friends._data]);
-  },
-
-  isFriend: function(name) {
-    return Friends._data.has(name);
-  },
-
-  toggleStatus: function(name, callback = ()=>{}) {
-    if (Friends._data.has(name)) {
-      Friends._data.delete(name);
-      callback(false);
+  toggleStatus: function(friendName) {
+    // search friendsList for friendName
+    let index = this.friendsList.indexOf(friendName);
+    if (index !== -1) {
+      // found,
+      // remove from friendsList
+      this.friendsList.splice(index, 1);
+      // turn styling OFF for each message from that friend
+      $('#chats').find('.username').each(function() {
+        if ($(this).text() === friendName) {
+          $(this).next().css({'font-weight': 'normal'});
+        }
+      });
     } else {
-      Friends._data.add(name);
-      callback(true);
+    // not found
+      // add to friendsList
+      this.friendsList.push(friendName);
+      // turn styling ON
+      $('#chats').find('.username').each(function() {
+        if ($(this).text() === friendName) {
+          $(this).next().css({'font-weight': 'bold'});
+        }
+      });
     }
+    // re-render the <ul> in #friends
+    $('#friends ul').html('');
+    this.friendsList.forEach((friendName) => {
+      $('#friends ul').append(`<li>${friendName}</li>`);
+    });
   }
-  
 };

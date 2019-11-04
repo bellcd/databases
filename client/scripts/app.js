@@ -15,25 +15,29 @@ var App = {
     App.startSpinner();
     App.fetch(App.stopSpinner);
 
+    // attach click handler on refresh button to invoke Parse.readAll onclick
+    $('#refresh').click(() => {
+      RoomsView.selectRoom('All');
+      Parse.readAll((data) => {
+        console.log('data: ', data);
+        MessagesView.render(data);
+      });
+    });
 
-    // Poll for new messages every 3 sec
-    setInterval(App.fetch, 3000);
+    // attach click handler for get-only-certain-messages button
+    $('#get-only-one-room').click(() => {
+      Parse.readOnlySomeRooms((data) => {
+        MessagesView.render(data);
+      }, null, RoomsView.currentlySelected);
+    });
+
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
-      console.log('data: ', data);
-
-      // Don't bother to update if we have no messages
-      if (!data || !data.length) {
-        console.log('here');
-        callback(); // not sure this is correct here ??
-        return;
-      }
-
-      Rooms.update(data, RoomsView.render);
-      Messages.update(data, MessagesView.render);
-
+      // examine the response from the server request:
+      console.log(data);
+      MessagesView.render(data);
       callback();
     });
   },
