@@ -18,7 +18,11 @@ var MessagesView = {
         RoomsView.render(data[i].roomname);
       }
       // call render() , passing in the relevant properties of each object
+<<<<<<< HEAD
       let messageEquals = MessageView.render({username: data[i].username, text: data[i].text, roomname: data[i].roomname});
+=======
+      let messageEquals = MessageView.render({username: data[i].User.username, text: data[i].text, roomname: data[i].Room.roomname});
+>>>>>>> solution
 
       // append escaped user input
       let $messageEquals = $(messageEquals); // TODO: adds show or hide functionality

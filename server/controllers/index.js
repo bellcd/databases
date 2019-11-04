@@ -1,10 +1,10 @@
-var models = require('../models');
+var db = require('../db');
 
 // need to handle case where the GET request also has a roomname in the request
 module.exports = {
   messages: {
-    // a function which handles a get request for all messages
     get: function (req, res) {
+<<<<<<< HEAD
       // console.log('inside controllers messages.get req.body: ', req.body);
       //get all the messages
       models.messages.get((err, messages) => {
@@ -15,9 +15,19 @@ module.exports = {
           res.status(200).send(messages);
         }
       });
+=======
+      db.Message.findAll({ include: [{ model: db.User }, { model: db.Room }] })
+        .then(function(messages) {
+          console.log('messages: ', messages)
+          res.json(messages);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+>>>>>>> solution
     },
-    // a function which handles posting a message to the database
     post: function (req, res) {
+<<<<<<< HEAD
       models.messages.post(req.body, (err, data) => {
         if (err) {
           res.status(400).send(err);
@@ -25,12 +35,34 @@ module.exports = {
           res.status(200).send();
         }
       });
+=======
+      db.User.findOrCreate({where: {username: req.body.username}})
+        // findOrCreate returns multiple resutls in an array
+        // use spread to assign the array to function arguments
+        .spread(function(user, created) {
+          db.Room.findOrCreate({where: {roomname: req.body.roomname}})
+            .spread(function(room, created) {
+              console.log('room: ', room);
+              console.log('user: ', user);
+
+              console.log('req.body: ', req.body);
+
+              db.Message.create({
+                UserId: user.get('id'),
+                text: req.body.text,
+                RoomId: room.get('id')
+              }).then(function(message) {
+                res.sendStatus(201);
+              });
+            })
+        });
+>>>>>>> solution
     }
   },
 
   users: {
-    // Ditto as above
     get: function (req, res) {
+<<<<<<< HEAD
       models.users.get((err, users) => {
         if (err) {
           res.status(400).send(err);
@@ -81,7 +113,36 @@ module.exports = {
           res.status(200).send();
         }
       });
+=======
+      db.User.findAll()
+        .then(function(users) {
+          res.json(users);
+        });
+    },
+    post: function (req, res) {
+      db.User.findOrCreate({where: {username: req.body.username}})
+        // findOrCreate returns multiple resutls in an array
+        // use spread to assign the array to function arguments
+        .spread(function(user, created) {
+          res.sendStatus(created ? 201 : 200);
+        });
+    }
+  },
+  rooms: {
+    get: function (req, res) {
+      db.Room.findAll()
+        .then(function(rooms) {
+          res.json(rooms);
+        })
+    },
+    post: function (req, res) {
+      console.log(req.body);
+
+      db.Room.findOrCreate({ where: {roomname: req.body.roomname }})
+        .spread(function(room, created) {
+          res.sendStatus(created ? 201 : 200);
+        });
+>>>>>>> solution
     }
   }
 };
-

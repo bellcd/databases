@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 // *********************************************************
 // *********************ORM VERSION*********************
 // *********************************************************
 // TODO: there's probably a better way to handle using / not using an ORM ...
 var db = require('../../orm-refactor/db/index.js');
 var Promise = require('bluebird');
+=======
+var db = require('../db/index.js');
+>>>>>>> solution
 
 module.exports = {
+
   messages: {
+<<<<<<< HEAD
     get: function() {
       db.User.findAll()
         .then((users) => {
@@ -74,17 +80,60 @@ module.exports = {
             callback();
           });
         });
+=======
+    get: function (callback) {
+      // fetch all messages
+      // text, username, roomname, id
+      var queryStr = 'select messages.id, messages.text, messages.roomname, users.username \
+                      from messages left outer join users on (messages.userid = users.id) \
+                      order by messages.id desc';
+      db.query(queryStr, function(err, results) {
+        callback(err, results);
+      });
+    },
+    post: function (params, callback) {
+      // create a message for a user id based on the given username
+      var queryStr = 'insert into messages(text, userid, roomname) \
+                      value (?, (select id from users where username = ? limit 1), ?)';
+      db.query(queryStr, params, function(err, results) {
+        callback(err, results);
+      });
+>>>>>>> solution
     }
   },
-
   users: {
     get: function (callback) {
+<<<<<<< HEAD
       db.dbConnection.query('SELECT username FROM users', (err, results) => {
         if (err) {
           callback(err, null);
         } else {
           callback(null, results);
         }
+=======
+      // fetch all users
+      var queryStr = 'select * from users';
+      db.query(queryStr, function(err, results) {
+        callback(err, results);
+      });
+    },
+    post: function (params, callback) {
+      // create a user
+      var queryStr = 'insert into users(username) values (?)';
+      db.query(queryStr, params, function(err, results) {
+        callback(err, results);
+      });
+    }
+  }
+  };
+
+  rooms: {
+    // Ditto as above.
+    get: function () {
+      db.dbConnection.query(`SELECT roomname FROM rooms`, (err, results) => {
+        if (err) { throw err; }
+        callback(results);
+>>>>>>> solution
       });
     },
     post: function(user) {
@@ -124,6 +173,7 @@ module.exports = {
     // }
   },
 
+<<<<<<< HEAD
   rooms: {
     get: function (callback) {
       db.dbConnection.query('SELECT roomname FROM rooms', (err, results) => {
@@ -152,6 +202,16 @@ module.exports = {
             callback();
           });
         }
+=======
+    post: function (room, callback) {
+      db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err, results, fields) => {
+        if (err) { throw err; }
+        callback();
+      });
+
+      db.dbConnection.query(`SELECT * FROM rooms`, (err, results, fields) => {
+        if (err) { throw err; }
+>>>>>>> solution
       });
     }
   }

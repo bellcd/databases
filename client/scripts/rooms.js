@@ -1,3 +1,4 @@
+
 var Rooms = {
   add: function(roomname) {
     roomname = roomname ? roomname : roomname = $('#rooms input').val();

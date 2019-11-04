@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "chatterbox-client-and-database",
+=======
+  "name": "databases",
+>>>>>>> solution
   "version": "1.1.0",
   "description": "A component-based chat-client using jQuery, backed with a MYSQL database",
   "author": "Hack Reactor <curriculum.team@hackreactor.com>",
@@ -12,17 +16,22 @@
     "postinstall": "curl -s https://raw.githubusercontent.com/reactorcore/pomander/master/bin/install | bash",
     "start": "nodemon ./server/app.js",
     "start:es6": "babel-node ./server/app.js",
+<<<<<<< HEAD
     "create-db": "mysql -u root < ./server/schema.sql",
     "test": "npm run create-db; npm --orm=no-orm run test-both",
     "test-orm": "npm --orm=orm run test-both",
     "test-orm-no-orm": "npm run create-db; npm run test; npm run test-orm",
     "test-both": "mocha server/spec/server-spec.js; RES=$?; kill %1; open ./SpecRunner.html; exit $RES;",
     "test-server": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
+=======
+    "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
+>>>>>>> solution
     "test-client": "open ./SpecRunner.html",
     "test:es6": "mocha --compilers js:babel-register server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "lint": "eslint ./"
   },
   "dependencies": {
+    "bluebird": "^3.7.0",
     "body-parser": "^1.9.2",
     "cors": "^2.8.5",
     "express": "^4.10.1",
@@ -42,7 +51,12 @@
     "sinon": "^6.3.4",
     "chai": "^4.1.2",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
+<<<<<<< HEAD
     "mocha": "^5.2.0"
+=======
+    "mocha": "^2.4.5",
+    "sinon": "^6.3.4"
+>>>>>>> solution
   },
   "babel": {
     "presets": [

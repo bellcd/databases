@@ -22,11 +22,17 @@ coverage
 build/
 dist/
 
+<<<<<<< HEAD
 # Dependency directories
 
 # Deployed apps should consider commenting these lines out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules/
+=======
+# Dependency directorys
+# Deployed apps should consider commenting these lines out:
+# see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
+>>>>>>> solution
 bower_components/
 
 ### OSX ###
@@ -60,6 +66,13 @@ pids
 logs
 results
 
+<<<<<<< HEAD
+=======
+### NPM ###
+npm-debug.log
+node_modules
+
+>>>>>>> solution
 ### Bower ###
 **/bower_components/
 
@@ -71,3 +84,9 @@ results
 .floobit
 .floo
 .flooignore
+<<<<<<< HEAD
+=======
+
+## API keys
+client/env/config.js
+>>>>>>> solution
