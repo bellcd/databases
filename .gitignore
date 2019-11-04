@@ -22,17 +22,9 @@ coverage
 build/
 dist/
 
-<<<<<<< HEAD
-# Dependency directories
-
-# Deployed apps should consider commenting these lines out:
-# see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
-node_modules/
-=======
 # Dependency directorys
 # Deployed apps should consider commenting these lines out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
->>>>>>> solution
 bower_components/
 
 ### OSX ###
@@ -84,9 +76,6 @@ node_modules
 .floobit
 .floo
 .flooignore
-<<<<<<< HEAD
-=======
 
 ## API keys
 client/env/config.js
->>>>>>> solution

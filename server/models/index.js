@@ -1,86 +1,8 @@
-<<<<<<< HEAD
-// *********************************************************
-// *********************ORM VERSION*********************
-// *********************************************************
-// TODO: there's probably a better way to handle using / not using an ORM ...
-var db = require('../../orm-refactor/db/index.js');
-var Promise = require('bluebird');
-=======
 var db = require('../db/index.js');
->>>>>>> solution
 
 module.exports = {
 
   messages: {
-<<<<<<< HEAD
-    get: function() {
-      db.User.findAll()
-        .then((users) => {
-          console.log('users: ', users);
-        })
-    },
-    // get: function (callback) {
-    //   var queryString = "select messages.text, users.username, rooms.roomname from messages inner join users on messages.id_users = users.id inner join rooms on messages.id_rooms = rooms.id;";
-    //   db.dbConnection.query(queryString, (err, messages) => {
-    //     if (err) { callback(err, null); }
-    //     callback(null, messages);
-    //   });
-    // },
-    post: function (message, callback) {
-      // console.log('inside models.messages.post, message.roomname: ', message.roomname);
-      let text = message.text;
-
-      // promises for getting user_id & roomname_id
-      // TODO: refactor so this is let wet ...
-      const userID = db.dbConnection.queryAsync(`SELECT id FROM users WHERE users.username = ?`, [message.username])
-        .then((users) => {
-          // if the user table doesn't have a record for that username, create one
-          if (users.length === 0) {
-            // promise to add the user to the DB
-            return module.exports.users.postAsync(message)
-              .then((data) => {
-                // promise to get that just added user's id
-                return db.dbConnection.queryAsync(`SELECT id FROM users WHERE users.username = ?`, [message.username]);
-              })
-              .then((id) => {
-                return id[0].id;
-              })
-              .catch((err) => err);
-          } else {
-            return users[0].id;
-          }
-        })
-        .catch((err) => callback(err, null));
-
-      const roomID = db.dbConnection.queryAsync(`SELECT id FROM rooms WHERE rooms.roomname = ?`, [message.roomname])
-        .then((rooms) => {
-          // if the room table doesn't have a record for that roomname, create one
-          if (rooms.length === 0) {
-            // promise to add the room to the DB
-            return module.exports.rooms.postAsync(message)
-              .then((data) => {
-                // promise to get that just added room's id
-                return db.dbConnection.queryAsync(`SELECT id FROM rooms WHERE rooms.roomname = ?`, [message.roomname]);
-              })
-              .then((id) => {
-                return id[0].id;
-              })
-              .catch((err) => err);
-          } else {
-            return rooms[0].id;
-          }
-        })
-        .catch((err) => callback(err, null));
-
-      Promise.all([userID, roomID])
-        .then((placeholder) => {
-          // insert the message text, roomID, and userID into the message table
-          db.dbConnection.query(`INSERT INTO messages (text, id_users, id_rooms) VALUES ("${text}", ?, ?)`, placeholder, (err, results, fields) => {
-            if (err) { throw err; }
-            callback();
-          });
-        });
-=======
     get: function (callback) {
       // fetch all messages
       // text, username, roomname, id
@@ -98,19 +20,10 @@ module.exports = {
       db.query(queryStr, params, function(err, results) {
         callback(err, results);
       });
->>>>>>> solution
     }
   },
   users: {
     get: function (callback) {
-<<<<<<< HEAD
-      db.dbConnection.query('SELECT username FROM users', (err, results) => {
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, results);
-        }
-=======
       // fetch all users
       var queryStr = 'select * from users';
       db.query(queryStr, function(err, results) {
@@ -133,7 +46,6 @@ module.exports = {
       db.dbConnection.query(`SELECT roomname FROM rooms`, (err, results) => {
         if (err) { throw err; }
         callback(results);
->>>>>>> solution
       });
     },
     post: function(user) {
@@ -173,36 +85,6 @@ module.exports = {
     // }
   },
 
-<<<<<<< HEAD
-  rooms: {
-    get: function (callback) {
-      db.dbConnection.query('SELECT roomname FROM rooms', (err, results) => {
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, results);
-        }
-      });
-    },
-    post: function (room, callback) {
-      // console.log('inside models rooms.post room: ', room);
-      db.dbConnection.query(`SELECT roomname FROM rooms WHERE roomname = '${room.roomname}'`, (err, results) => {
-        if (err) {
-          // console.log('1');
-          callback(err, null);
-        } else if (results.length === 1) {
-          // console.log('2');
-          // that roomname already exists in the room table
-          callback();
-          // callback(new Error(`roomname ${room.roomname} already exists. No room created`), null); // In a case like this, s it better to send back some sort of error, or take no action?
-        } else {
-          // console.log('3');
-          db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err, results) => {
-            if (err) { callback(err, null); }
-            callback();
-          });
-        }
-=======
     post: function (room, callback) {
       db.dbConnection.query(`INSERT INTO rooms (roomname) VALUES ('${room.roomname}')`, (err, results, fields) => {
         if (err) { throw err; }
@@ -211,7 +93,6 @@ module.exports = {
 
       db.dbConnection.query(`SELECT * FROM rooms`, (err, results, fields) => {
         if (err) { throw err; }
->>>>>>> solution
       });
     }
   }

@@ -10,10 +10,6 @@ router.post('/users', controller.users.post);
 
 router.get('/rooms', controller.rooms.get);
 router.post('/rooms', controller.rooms.post);
-<<<<<<< HEAD
-
-=======
->>>>>>> solution
 
 module.exports = router;
 

@@ -1,14 +1,6 @@
 var express = require('express');
-<<<<<<< HEAD
-// var db = require('./db');
-
-// // ORM refactor
-// var db = require('../orm-refactor/db/index.js'); // not needed??
-
-=======
 var db = require('./db');
 var Sequelize = require('sequelize');
->>>>>>> solution
 
 // Middleware
 var morgan = require('morgan');
@@ -28,11 +20,8 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(parser.json());
 
-<<<<<<< HEAD
-=======
 // Enables CORS
 app.use(cors());
->>>>>>> solution
 
 // Set up our routes
 app.use('/classes', router);
@@ -46,9 +35,3 @@ if (!module.parent) {
   console.log('Listening on', app.get('port'));
 }
 
-<<<<<<< HEAD
-// db.dbConnection.connect(); // not needed because using ORM ??
-
-module.exports.app = app;
-=======
->>>>>>> solution
