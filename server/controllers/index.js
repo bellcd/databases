@@ -3,8 +3,9 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (req, res) {
-      db.Message.findAll({include: [db.User]})
+      db.Message.findAll({ include: [{ model: db.User }, { model: db.Room }] })
         .then(function(messages) {
+          console.log('messages: ', messages)
           res.json(messages);
         })
         .catch(err => {
