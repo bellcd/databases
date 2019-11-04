@@ -1,38 +1,46 @@
-var models = require('../models');
-var db = require('../db/index.js');
+var db = require('../db');
 
 module.exports = {
-
   messages: {
     get: function (req, res) {
-      models.messages.get(function(err, results) {
-        if (err) { /* do something */ }
-        res.json(results);
-      });
+      db.Message.findAll({include: [db.User]})
+        .then(function(messages) {
+          res.json(messages);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     },
     post: function (req, res) {
-      var params = [req.body.message, req.body.username, req.body.roomname];
-      models.messages.post(params, function(err, results) {
-        if (err) { /* do something */ }
-        res.sendStatus(201);
-      });
+      db.User.findOrCreate({where: {username: req.body.username}})
+        // findOrCreate returns multiple resutls in an array
+        // use spread to assign the array to function arguments
+        .spread(function(user, created) {
+          db.Message.create({
+            userid: user.get('id'),
+            text: req.body.message,
+            roomname: req.body.roomname
+          }).then(function(message) {
+            res.sendStatus(201);
+          });
+        });
     }
   },
 
   users: {
     get: function (req, res) {
-      models.users.get(function(err, results) {
-        if (err) { /* do something */ }
-        res.json(results);
-      });
+      db.User.findAll()
+        .then(function(users) {
+          res.json(users);
+        });
     },
     post: function (req, res) {
-      var params = [req.body.username];
-      models.users.post(params, function(err, results) {
-        if (err) { /* do something */ }
-        res.sendStatus(201);
-      });
+      db.User.findOrCreate({where: {username: req.body.username}})
+        // findOrCreate returns multiple resutls in an array
+        // use spread to assign the array to function arguments
+        .spread(function(user, created) {
+          res.sendStatus(created ? 201 : 200);
+        });
     }
   }
-  };
-
+};

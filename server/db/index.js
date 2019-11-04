@@ -1,40 +1,32 @@
 var Sequelize = require('sequelize');
-
-
-var connection = mysql.createConnection({
-  user: 'root',
-  password: '',
-  database: 'chat'
+var db = new Sequelize('chat', 'root', '', {
+  dialect: 'mysql'
 });
 
-connection.connect();
-
-module.exports = connection;
-
-var dbConnection = createConnection();
-
-var users = dbConnection.define('users', {
+// we define the models we need using js--we don't need a schema file!
+var User = db.define('User', {
   username: Sequelize.STRING
 });
 
-var messages = dbConnection.define('messages', {
+var Message = db.define('Message', {
   text: Sequelize.STRING,
-  sample: Sequelize.STRING
-});
-
-var rooms = dbConnection.define('rooms', {
   roomname: Sequelize.STRING
 });
 
-users.hasMany(messages);
-messages.belongsTo(users);
+// TODO: define a Room model??
 
-dbConnection.sync();
+// puts a UserId column on each Message instance
+// also gives us the `.setUser` method available
+// after creating a new instance of Message
+Message.belongsTo(User);
+// enables bi-directional associations between Users and Messages
+User.hasMany(Message);
 
-module.exports = {
-  createConnection,
-  dbConnection,
-  users,
-  rooms,
-  messages
-}
+
+User.sync();
+Message.sync();
+// creates these tables in MySQL if they don't already exist. Pass in {force: true}
+// to drop any existing user and message tables and make new ones.
+
+exports.User = User;
+exports.Message = Message;
